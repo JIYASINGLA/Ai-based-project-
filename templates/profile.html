@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Mood Music & Quote Recommender</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .glass-effect:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-900 via-blue-900 to-purple-900 min-h-screen text-white">
+    <div id="particles-js"></div>
+    
+    <!-- Header -->
+    <header class="container mx-auto px-4 py-6">
+        <div class="flex justify-between items-center">
+            <a href="/" class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-purple-500">
+                Mood Music & Quote Recommender
+            </a>
+            <div class="flex items-center space-x-4">
+                <div id="profile-section">
+                    <div class="relative" id="profile-dropdown">
+                        <button class="flex items-center space-x-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors">
+                            <img id="profile-pic" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Profile" class="w-8 h-8 rounded-full">
+                            <span id="username">User</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div id="profile-dropdown-menu" class="absolute right-0 mt-2 w-48 bg-white/10 backdrop-blur-lg rounded-lg shadow-lg hidden">
+                            <a href="/profile" class="block px-4 py-2 text-white hover:bg-white/20">Profile</a>
+                            <a href="/settings" class="block px-4 py-2 text-white hover:bg-white/20">Settings</a>
+                            <a href="#" onclick="signOut()" class="block px-4 py-2 text-white hover:bg-white/20">Sign Out</a>
+                        </div>
+                    </div>
+                </div>
+                <div id="auth-buttons" class="flex space-x-2 hidden">
+                    <button onclick="showAuthModal('signin')" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg transition-colors">
+                        Sign In
+                    </button>
+                    <button onclick="showAuthModal('signup')" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition-colors">
+                        Sign Up
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Profile Section -->
+        <div class="glass-effect rounded-xl p-8 mb-8">
+            <div class="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
+                <!-- Profile Picture -->
+                <div class="flex-shrink-0">
+                    <img id="large-profile-pic" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Profile" class="w-32 h-32 rounded-full border-4 border-pink-500">
+                    <button onclick="document.getElementById('profile-pic-input').click()" class="mt-4 w-full bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg transition-colors">
+                        Change Picture
+                    </button>
+                    <input type="file" id="profile-pic-input" accept="image/*" class="hidden" onchange="updateProfilePicture(this)">
+                </div>
+
+                <!-- Profile Info -->
+                <div class="flex-grow">
+                    <h1 id="profile-name" class="text-3xl font-bold mb-2">User Name</h1>
+                    <p id="profile-username" class="text-pink-300 mb-1 text-lg font-mono"></p>
+                    <p id="profile-email" class="text-gray-300 mb-1"></p>
+                    <p id="profile-created" class="text-gray-400 mb-4 text-sm"></p>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-300 mb-1">Bio</label>
+                        <textarea id="profile-bio" class="w-full bg-white/10 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500" rows="3" placeholder="Tell us about yourself..."></textarea>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-300 mb-1">Favorite Music Genres</label>
+                        <div class="flex flex-wrap gap-2" id="music-genres">
+                            <!-- Genres will be populated by JS -->
+                        </div>
+                    </div>
+                    <button onclick="saveProfile()" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded-lg transition-colors">
+                        Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mood Statistics Section -->
+        <div class="glass-effect rounded-xl p-6 mb-8">
+            <h2 class="text-xl font-semibold mb-4">Mood Statistics</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                <div>
+                    <div class="text-3xl font-bold text-pink-400" id="stat-streak">0</div>
+                    <div class="text-gray-300">Current Streak</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-purple-400" id="stat-common-mood">-</div>
+                    <div class="text-gray-300">Most Common Mood</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-blue-400" id="stat-total-entries">0</div>
+                    <div class="text-gray-300">Total Entries</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Section -->
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Recent Moods -->
+            <div class="glass-effect rounded-xl p-6">
+                <h2 class="text-xl font-semibold mb-4">Recent Moods</h2>
+                <div id="recent-moods" class="space-y-4">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Favorite Songs -->
+            <div class="glass-effect rounded-xl p-6">
+                <h2 class="text-xl font-semibold mb-4">Favorite Songs</h2>
+                <div id="favorite-songs" class="space-y-4">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Favorite Quotes Section -->
+        <div class="glass-effect rounded-xl p-6 mb-8">
+            <h2 class="text-xl font-semibold mb-4">Favorite Quotes</h2>
+            <div id="favorite-quotes" class="space-y-4">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize particles.js
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 100, density: { enable: true, value_area: 800 } },
+                color: { value: '#ffffff' },
+                shape: { type: 'circle' },
+                opacity: { value: 0.5, random: true },
+                size: { value: 3, random: true },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: '#ffffff',
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 3,
+                    direction: 'none',
+                    random: true,
+                    straight: false,
+                    out_mode: 'out',
+                    bounce: false
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: { enable: true, mode: 'repulse' },
+                    onclick: { enable: true, mode: 'push' },
+                    resize: true
+                },
+                modes: {
+                    repulse: { distance: 100, duration: 0.4 },
+                    push: { particles_nb: 4 }
+                }
+            },
+            retina_detect: true
+        });
+
+        // Load profile data
+        async function loadProfile() {
+            try {
+                const response = await fetch('/api/profile');
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('profile-name').textContent = data.name;
+                    document.getElementById('profile-username').textContent = '@' + (data.username || '');
+                    document.getElementById('profile-email').textContent = data.email;
+                    document.getElementById('profile-bio').value = data.bio || '';
+                    document.getElementById('profile-created').textContent = data.created_at ? 'Joined: ' + new Date(data.created_at).toLocaleDateString() : '';
+                    if (data.profile_pic) {
+                        document.getElementById('large-profile-pic').src = data.profile_pic;
+                        document.getElementById('profile-pic').src = data.profile_pic;
+                    }
+                    // Update music genres
+                    const genresContainer = document.getElementById('music-genres');
+                    genresContainer.innerHTML = (data.music_genres || []).map(genre => `
+                        <button class="bg-pink-500/20 hover:bg-pink-500/30 text-white px-3 py-1 rounded-full text-sm transition-colors">${genre}</button>
+                    `).join('');
+                    // Load mood stats
+                    fetch('/api/mood-stats').then(r=>r.json()).then(stats => {
+                        if (stats.streak !== undefined) document.getElementById('stat-streak').textContent = stats.streak;
+                        if (stats.common_mood) document.getElementById('stat-common-mood').textContent = stats.common_mood;
+                        if (stats.total_entries !== undefined) document.getElementById('stat-total-entries').textContent = stats.total_entries;
+                    });
+                    // Load favorite quotes
+                    fetch('/api/favorites').then(r=>r.json()).then(favs => {
+                        const favQuotes = (favs.favorites && favs.favorites.quotes) ? favs.favorites.quotes : [];
+                        const container = document.getElementById('favorite-quotes');
+                        if (favQuotes.length === 0) {
+                            container.innerHTML = '<div class="text-gray-400">No favorite quotes yet.</div>';
+                        } else {
+                            container.innerHTML = favQuotes.map(q => `<div class="bg-white/10 rounded-lg p-4 italic">"${q}"</div>`).join('');
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        // Update profile picture
+        async function updateProfilePicture(input) {
+            if (input.files && input.files[0]) {
+                const formData = new FormData();
+                formData.append('profile_pic', input.files[0]);
+                
+                try {
+                    const response = await fetch('/api/profile', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        document.getElementById('large-profile-pic').src = URL.createObjectURL(input.files[0]);
+                        document.getElementById('profile-pic').src = URL.createObjectURL(input.files[0]);
+                    } else {
+                        alert(data.error || 'Failed to update profile picture');
+                    }
+                } catch (error) {
+                    alert('An error occurred while updating profile picture');
+                }
+            }
+        }
+
+        // Save profile changes
+        async function saveProfile() {
+            const bio = document.getElementById('profile-bio').value;
+            const musicGenres = Array.from(document.querySelectorAll('#music-genres button')).map(button => button.textContent);
+            
+            try {
+                const response = await fetch('/api/profile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        bio,
+                        music_genres: musicGenres
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Profile updated successfully!');
+                } else {
+                    alert(data.error || 'Failed to update profile');
+                }
+            } catch (error) {
+                alert('An error occurred while updating profile');
+            }
+        }
+
+        // Sign out
+        async function signOut() {
+            try {
+                const response = await fetch('/api/signout', {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    window.location.href = '/';
+                }
+            } catch (error) {
+                alert('An error occurred during sign out');
+            }
+        }
+
+        // Load profile data when page loads
+        document.addEventListener('DOMContentLoaded', loadProfile);
+
+        function toggleProfileDropdown() {
+            const menu = document.getElementById('profile-dropdown-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('profile-dropdown');
+            if (!dropdown.contains(event.target)) {
+                document.getElementById('profile-dropdown-menu').classList.add('hidden');
+            }
+        });
+
+        async function checkAuthStatus() {
+            try {
+                const response = await fetch('/api/profile');
+                const data = await response.json();
+                if (data.success) {
+                    // User is signed in
+                    document.getElementById('auth-buttons').classList.add('hidden');
+                    document.getElementById('profile-section').classList.remove('hidden');
+                    document.getElementById('username').textContent = data.name || data.username;
+                    if (data.profile_pic) {
+                        document.getElementById('profile-pic').src = data.profile_pic;
+                    }
+                } else {
+                    // Not signed in
+                    document.getElementById('auth-buttons').classList.remove('hidden');
+                    document.getElementById('profile-section').classList.add('hidden');
+                }
+            } catch (e) {
+                document.getElementById('auth-buttons').classList.remove('hidden');
+                document.getElementById('profile-section').classList.add('hidden');
+            }
+        }
+        document.addEventListener('DOMContentLoaded', checkAuthStatus);
+    </script>
+</body>
+</html> 

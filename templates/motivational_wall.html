@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🌟 Motivational Wall</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            color: #22223b;
+            background: linear-gradient(270deg, #fbbf24, #f472b6, #a7c7e7, #6ee7b7, #fbbf24);
+            background-size: 400% 400%;
+            animation: gradientBG 18s ease infinite;
+            position: relative;
+        }
+        @keyframes gradientBG {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at 60% 40%, #fff7e6cc 0%, #fbbf2400 70%);
+            filter: blur(40px);
+        }
+        .featured-quote {
+            background: linear-gradient(90deg, #fbbf24 0%, #f472b6 100%);
+            color: #fff;
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 32px #fbbf2444;
+            padding: 2rem 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .quote-carousel {
+            background: linear-gradient(90deg, #a7c7e7 0%, #fbbf24 100%);
+            border-radius: 1.5rem;
+            box-shadow: 0 2px 16px #a7c7e744;
+            padding: 1.5rem 1rem;
+            margin-bottom: 2rem;
+        }
+        .message-card {
+            background: linear-gradient(120deg, #fbbf24 0%, #f472b6 100%);
+            color: #fff;
+            border-radius: 1.25rem;
+            box-shadow: 0 2px 16px #f472b644;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .message-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 8px 32px #fbbf24cc;
+        }
+        .icon {
+            font-size: 2.2rem;
+            margin-right: 0.5rem;
+        }
+        .story-card {
+            background: linear-gradient(120deg, #a7c7e7 0%, #fbbf24 100%);
+            color: #22223b;
+            border-radius: 1.25rem;
+            box-shadow: 0 2px 16px #a7c7e744;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        @media (max-width: 640px) {
+            .featured-quote, .quote-carousel, .message-card, .story-card {
+                padding: 1rem 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-white/80 shadow-md sticky top-0 z-50 animate__animated animate__fadeInDown">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="/" class="text-xl font-bold text-pink-600">← Home</a>
+            <h1 class="text-4xl font-extrabold text-yellow-500 animate__animated animate__rubberBand">🌟 Motivational Wall</h1>
+            <div class="w-24"></div>
+        </div>
+    </header>
+
+    <div class="max-w-4xl mx-auto py-10 px-4">
+        <!-- Daily Motivation Widget & Streak Tracker -->
+        <div class="flex flex-col md:flex-row gap-6 mb-8 animate__animated animate__fadeInDown">
+            <!-- Daily Motivation Widget -->
+            <div class="flex-1 bg-gradient-to-r from-yellow-400 to-pink-400 text-white rounded-2xl shadow-lg p-6 flex flex-col justify-between">
+                <div class="flex items-center mb-2">
+                    <span class="icon">🌞</span>
+                    <span class="text-lg font-bold">Daily Motivation</span>
+                </div>
+                <div id="daily-motivation" class="text-lg italic mb-4">Loading...</div>
+                <button id="motivation-done" onclick="markMotivationDone()" class="bg-white/80 hover:bg-yellow-200 text-yellow-700 font-bold px-4 py-2 rounded-lg transition-colors">Mark as Done</button>
+            </div>
+            <!-- Motivation Streak Tracker -->
+            <div class="flex-1 bg-gradient-to-r from-pink-400 to-yellow-400 text-white rounded-2xl shadow-lg p-6 flex flex-col justify-between items-center">
+                <div class="flex items-center mb-2">
+                    <span class="icon">🔥</span>
+                    <span class="text-lg font-bold">Streak</span>
+                </div>
+                <div class="text-4xl font-extrabold" id="streak-count">0</div>
+                <div class="text-base">days in a row!</div>
+            </div>
+        </div>
+        <!-- Confetti Canvas -->
+        <canvas id="confetti-canvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:100;display:none;"></canvas>
+        <!-- Featured Quote -->
+        <div class="featured-quote animate__animated animate__fadeInUp">
+            <div class="flex items-center justify-center mb-2">
+                <span class="icon">💡</span>
+                <span class="text-2xl font-bold">Featured Quote</span>
+            </div>
+            <blockquote class="text-xl italic text-center" id="featured-quote-text">
+                "The only way to do great work is to love what you do."
+            </blockquote>
+            <div class="text-right mt-2 font-semibold" id="featured-quote-author">- Steve Jobs</div>
+        </div>
+
+        <!-- Rotating Quote Carousel -->
+        <div class="quote-carousel animate__animated animate__fadeInLeft">
+            <div class="flex items-center justify-center mb-2">
+                <span class="icon">🌈</span>
+                <span class="text-lg font-bold">Motivational Quotes</span>
+            </div>
+            <blockquote class="text-lg italic text-center" id="carousel-quote-text">
+                "Success is not final, failure is not fatal: It is the courage to continue that counts."
+            </blockquote>
+            <div class="text-right mt-2 font-semibold" id="carousel-quote-author">- Winston Churchill</div>
+        </div>
+
+        <!-- User Stories / Achievements -->
+        <div class="mb-8 animate__animated animate__fadeInRight">
+            <div class="flex items-center justify-center mb-2">
+                <span class="icon">🏆</span>
+                <span class="text-lg font-bold">Community Achievements</span>
+            </div>
+            <div id="stories">
+                <div class="story-card animate__animated animate__fadeInUp">
+                    <div class="font-semibold mb-1">Skylar Phoenix</div>
+                    <div class="text-base">Launched a kindness campaign, inspiring 100+ people to share daily positivity! 🌍✨</div>
+                </div>
+                <div class="story-card animate__animated animate__fadeInUp animate__delay-1s">
+                    <div class="font-semibold mb-1">Alex</div>
+                    <div class="text-base">Started a daily meditation habit and feels more positive every day. 🧘‍♂️</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Post Form -->
+        <div class="bg-white/80 rounded-xl p-6 shadow-lg mb-8 animate__animated animate__fadeInUp">
+            <form id="msg-form" class="space-y-4">
+                <div class="flex items-start space-x-4">
+                    <img id="user-avatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Your Avatar" class="w-12 h-12 rounded-full">
+                    <div class="flex-1">
+                        <textarea id="msg-input" class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-pink-500 focus:border-transparent" rows="3" placeholder="Share your motivation..."></textarea>
+                    </div>
+                </div>
+                <div class="flex justify-end items-center">
+                    <button type="submit" class="bg-yellow-500 hover:bg-pink-500 text-white px-6 py-2 rounded-lg font-semibold transition-colors">
+                        Post
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Messages Wall -->
+        <div id="wall" class="space-y-6"></div>
+    </div>
+
+    <script>
+        // Rotating Motivational Quotes
+        const quotes = [
+            { text: "Success is not final, failure is not fatal: It is the courage to continue that counts.", author: "Winston Churchill" },
+            { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+            { text: "The only limit to our realization of tomorrow is our doubts of today.", author: "Franklin D. Roosevelt" },
+            { text: "You are never too old to set another goal or to dream a new dream.", author: "C.S. Lewis" },
+            { text: "Act as if what you do makes a difference. It does.", author: "William James" },
+            { text: "What you get by achieving your goals is not as important as what you become by achieving your goals.", author: "Zig Ziglar" },
+            { text: "Happiness is not something ready made. It comes from your own actions.", author: "Dalai Lama" }
+        ];
+        let quoteIndex = 0;
+        function rotateQuote() {
+            quoteIndex = (quoteIndex + 1) % quotes.length;
+            document.getElementById('carousel-quote-text').textContent = '"' + quotes[quoteIndex].text + '"';
+            document.getElementById('carousel-quote-author').textContent = '- ' + quotes[quoteIndex].author;
+        }
+        setInterval(rotateQuote, 5000);
+
+        // Load motivational messages (simulate with demo data)
+        function loadWall() {
+            // You can replace this with your backend fetch
+            const messages = [
+                { username: 'Priya', message: 'Every day is a new beginning. Take a deep breath, smile, and start again! 😊', icon: '🌅' },
+                { username: 'Rahul', message: 'You are capable of amazing things. Keep going! 💪', icon: '🚀' },
+                { username: 'Sara', message: 'Difficult roads often lead to beautiful destinations. 🌈', icon: '🏞️' },
+                { username: 'Anonymous', message: 'Stay positive, work hard, make it happen! ✨', icon: '🌟' }
+            ];
+            const wall = document.getElementById('wall');
+            wall.innerHTML = messages.map(m => `
+                <div class="message-card p-6 animate__animated animate__fadeInUp">
+                    <div class="flex items-center mb-2">
+                        <span class="icon">${m.icon}</span>
+                        <span class="font-bold text-lg">${m.username}</span>
+                    </div>
+                    <div class="text-lg">${m.message}</div>
+                </div>
+            `).join('');
+        }
+        loadWall();
+
+        // Handle form submission (demo only)
+        document.getElementById('msg-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const msg = document.getElementById('msg-input').value.trim();
+            if (msg) {
+                // In a real app, send to backend
+                alert('Thank you for sharing your motivation! (In a real app, this would be posted to the wall.)');
+                document.getElementById('msg-input').value = '';
+            }
+        };
+
+        // --- Daily Motivation Widget & Streak Tracker ---
+        const dailyMotivations = [
+            "Smile at three people today and notice how it makes you feel.",
+            "Write down one thing you're grateful for.",
+            "Take a 5-minute mindful breathing break.",
+            "Compliment someone sincerely.",
+            "Do one thing today that scares you a little.",
+            "Reflect on a recent success, no matter how small.",
+            "Encourage a friend or family member.",
+            "Set a small goal and take the first step toward it.",
+            "Spend 10 minutes outside and enjoy nature.",
+            "List three things you love about yourself."
+        ];
+        function getTodayKey() {
+            const d = new Date();
+            return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
+        }
+        function loadDailyMotivation() {
+            const todayKey = getTodayKey();
+            // Pick a motivation based on the day
+            const idx = (new Date().getDate() + new Date().getMonth()) % dailyMotivations.length;
+            document.getElementById('daily-motivation').textContent = dailyMotivations[idx];
+            // Check if done
+            const done = localStorage.getItem('motivation-done-' + todayKey);
+            document.getElementById('motivation-done').disabled = false;
+            document.getElementById('motivation-done').textContent = done ? 'Undo Done' : 'Mark as Done';
+        }
+        function markMotivationDone() {
+            const todayKey = getTodayKey();
+            const done = localStorage.getItem('motivation-done-' + todayKey);
+            if (!done) {
+                localStorage.setItem('motivation-done-' + todayKey, '1');
+                incrementStreak();
+                launchConfetti();
+            } else {
+                localStorage.removeItem('motivation-done-' + todayKey);
+                decrementStreak();
+            }
+            loadDailyMotivation();
+            updateStreakDisplay();
+        }
+        function decrementStreak() {
+            let streak = getStreak();
+            if (streak > 0) {
+                streak -= 1;
+                setStreak(streak);
+            }
+            // Optionally, remove lastDone if undone
+            setLastDone('');
+        }
+        // --- Streak Tracker ---
+        function getStreak() {
+            return parseInt(localStorage.getItem('motivation-streak') || '0', 10);
+        }
+        function getLastDone() {
+            return localStorage.getItem('motivation-last-done') || '';
+        }
+        function setStreak(val) {
+            localStorage.setItem('motivation-streak', val);
+        }
+        function setLastDone(dateStr) {
+            localStorage.setItem('motivation-last-done', dateStr);
+        }
+        function updateStreakDisplay() {
+            document.getElementById('streak-count').textContent = getStreak();
+        }
+        function incrementStreak() {
+            const todayKey = getTodayKey();
+            const lastDone = getLastDone();
+            let streak = getStreak();
+            if (lastDone === todayKey) return; // Already done today
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yKey = yesterday.getFullYear() + '-' + (yesterday.getMonth()+1) + '-' + yesterday.getDate();
+            if (lastDone === yKey) {
+                streak += 1;
+            } else {
+                streak = 1;
+            }
+            setStreak(streak);
+            setLastDone(todayKey);
+            updateStreakDisplay();
+            if (streak % 7 === 0) {
+                setTimeout(() => alert(`🎉 Amazing! ${streak} days in a row! Keep it up!`), 500);
+            }
+        }
+        function initStreak() {
+            const todayKey = getTodayKey();
+            const lastDone = getLastDone();
+            if (lastDone !== todayKey && localStorage.getItem('motivation-done-' + todayKey)) {
+                setLastDone(todayKey);
+            }
+            updateStreakDisplay();
+        }
+        // --- Confetti Animation ---
+        function launchConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            canvas.style.display = 'block';
+            const ctx = canvas.getContext('2d');
+            const confetti = [];
+            for (let i = 0; i < 80; i++) {
+                confetti.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * -canvas.height,
+                    r: 6 + Math.random() * 8,
+                    d: Math.random() * 80,
+                    color: `hsl(${Math.random()*360},90%,60%)`,
+                    tilt: Math.random() * 10 - 10
+                });
+            }
+            let angle = 0;
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                angle += 0.01;
+                for (let i = 0; i < confetti.length; i++) {
+                    let c = confetti[i];
+                    ctx.beginPath();
+                    ctx.arc(c.x, c.y, c.r, 0, 2 * Math.PI);
+                    ctx.fillStyle = c.color;
+                    ctx.fill();
+                    c.y += Math.cos(angle + c.d) + 2 + c.r/4;
+                    c.x += Math.sin(angle) * 2;
+                    if (c.y > canvas.height) {
+                        c.x = Math.random() * canvas.width;
+                        c.y = Math.random() * -20;
+                    }
+                }
+                if (canvas.style.display === 'block') {
+                    requestAnimationFrame(draw);
+                }
+            }
+            draw();
+            setTimeout(() => { canvas.style.display = 'none'; ctx.clearRect(0,0,canvas.width,canvas.height); }, 1800);
+        }
+        // --- Init ---
+        loadDailyMotivation();
+        initStreak();
+    </script>
+</body>
+</html>

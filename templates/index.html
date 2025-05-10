@@ -1,0 +1,1776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Music & Quote Recommender</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <style>
+        /* Base styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #0f0c29);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        /* Responsive Container */
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Responsive Grid System */
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        /* Responsive Typography */
+        h1 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            line-height: 1.3;
+        }
+
+        h3 {
+            font-size: clamp(1.25rem, 3vw, 2rem);
+            line-height: 1.4;
+        }
+
+        p {
+            font-size: clamp(1rem, 2vw, 1.125rem);
+            line-height: 1.6;
+        }
+
+        /* Responsive Header */
+        header {
+            padding: 1rem;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        /* Responsive Navigation */
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Responsive Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            font-size: clamp(0.875rem, 2vw, 1rem);
+            white-space: nowrap;
+        }
+
+        /* Responsive Cards */
+        .card {
+            padding: clamp(1rem, 3vw, 2rem);
+        }
+
+        /* Responsive Images */
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Responsive Grid Layouts */
+        .grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+        .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+        /* Responsive Spacing */
+        .space-y-4 > * + * { margin-top: 1rem; }
+        .space-y-8 > * + * { margin-top: 2rem; }
+        .space-x-4 > * + * { margin-left: 1rem; }
+        .space-x-8 > * + * { margin-left: 2rem; }
+
+        /* Media Queries */
+        @media (max-width: 1280px) {
+            .container {
+                max-width: 1024px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                max-width: 768px;
+            }
+            .grid-cols-4 { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                max-width: 640px;
+            }
+            .grid-cols-3, .grid-cols-4 { grid-template-columns: repeat(2, 1fr); }
+            
+            /* Adjust header for mobile */
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            /* Adjust navigation for mobile */
+            .nav-links {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            /* Adjust buttons for mobile */
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            /* Adjust cards for mobile */
+            .card {
+                margin: 0.5rem 0;
+            }
+
+            /* Adjust spacing for mobile */
+            .space-y-4 > * + * { margin-top: 0.75rem; }
+            .space-y-8 > * + * { margin-top: 1.5rem; }
+            .space-x-4 > * + * { margin-left: 0.75rem; }
+            .space-x-8 > * + * { margin-left: 1.5rem; }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 0 0.75rem;
+            }
+            .grid-cols-2, .grid-cols-3, .grid-cols-4 { grid-template-columns: 1fr; }
+
+            /* Adjust typography for small screens */
+            h1 { font-size: 1.75rem; }
+            h2 { font-size: 1.5rem; }
+            h3 { font-size: 1.25rem; }
+            p { font-size: 1rem; }
+
+            /* Adjust spacing for small screens */
+            .space-y-4 > * + * { margin-top: 0.5rem; }
+            .space-y-8 > * + * { margin-top: 1rem; }
+            .space-x-4 > * + * { margin-left: 0.5rem; }
+            .space-x-8 > * + * { margin-left: 1rem; }
+        }
+
+        /* Responsive Background Effects */
+        @media (max-width: 768px) {
+            .shape {
+                transform: scale(0.7);
+            }
+            .glow-effect {
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .shape {
+                transform: scale(0.5);
+            }
+            .glow-effect {
+                transform: translate(-50%, -50%) scale(0.6);
+            }
+        }
+
+        /* Responsive Animations */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* Responsive Modal */
+        .modal {
+            width: 90%;
+            max-width: 500px;
+            margin: 1rem auto;
+        }
+
+        @media (max-width: 640px) {
+            .modal {
+                width: 95%;
+                margin: 0.5rem auto;
+            }
+        }
+
+        /* Responsive Form Elements */
+        input, textarea, select {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 640px) {
+            input, textarea, select {
+                padding: 0.5rem;
+                font-size: 0.875rem;
+            }
+        }
+
+        /* Responsive Tables */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Responsive Images */
+        .img-responsive {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Responsive Videos */
+        .video-responsive {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+        }
+
+        .video-responsive iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Responsive Flexbox Utilities */
+        .flex-responsive {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        @media (max-width: 640px) {
+            .flex-responsive {
+                flex-direction: column;
+            }
+        }
+
+        /* Responsive Grid Utilities */
+        .auto-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        /* Responsive Spacing Utilities */
+        .responsive-padding {
+            padding: clamp(1rem, 3vw, 2rem);
+        }
+
+        .responsive-margin {
+            margin: clamp(1rem, 3vw, 2rem);
+        }
+
+        /* Responsive Text Alignment */
+        @media (max-width: 640px) {
+            .text-center-mobile {
+                text-align: center;
+            }
+        }
+
+        /* Responsive Visibility */
+        .hide-mobile {
+            display: block;
+        }
+
+        .show-mobile {
+            display: none;
+        }
+
+        @media (max-width: 640px) {
+            .hide-mobile {
+                display: none;
+            }
+
+            .show-mobile {
+                display: block;
+            }
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            background: transparent;
+        }
+        .mood-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            transition: opacity 0.8s ease;
+            z-index: -2;
+            filter: blur(8px);
+            animation: zoomInOut 20s ease-in-out infinite;
+        }
+        @keyframes zoomInOut {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .animated-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -3;
+            background: linear-gradient(45deg, 
+                rgba(79, 70, 229, 0.3),
+                rgba(147, 51, 234, 0.3),
+                rgba(236, 72, 153, 0.3),
+                rgba(79, 70, 229, 0.3));
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+            opacity: 0.7;
+        }
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+        .shape {
+            position: absolute;
+            background: linear-gradient(45deg, rgba(79, 70, 229, 0.1), rgba(147, 51, 234, 0.1));
+            border-radius: 50%;
+            animation: floatShape 20s infinite linear;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .shape:nth-child(1) {
+            width: 400px;
+            height: 400px;
+            top: -200px;
+            left: -200px;
+            animation-duration: 25s;
+            background: linear-gradient(45deg, rgba(236, 72, 153, 0.1), rgba(147, 51, 234, 0.1));
+        }
+        .shape:nth-child(2) {
+            width: 300px;
+            height: 300px;
+            top: 50%;
+            right: -150px;
+            animation-duration: 20s;
+            background: linear-gradient(45deg, rgba(79, 70, 229, 0.1), rgba(236, 72, 153, 0.1));
+        }
+        .shape:nth-child(3) {
+            width: 250px;
+            height: 250px;
+            bottom: -125px;
+            left: 50%;
+            animation-duration: 15s;
+            background: linear-gradient(45deg, rgba(147, 51, 234, 0.1), rgba(79, 70, 229, 0.1));
+        }
+        @keyframes floatShape {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(100px, 100px) rotate(90deg); }
+            50% { transform: translate(0, 200px) rotate(180deg); }
+            75% { transform: translate(-100px, 100px) rotate(270deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+        .glow-effect {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vmax;
+            height: 100vmax;
+            background: radial-gradient(circle at center,
+                rgba(79, 70, 229, 0.15) 0%,
+                rgba(147, 51, 234, 0.1) 25%,
+                rgba(236, 72, 153, 0.05) 50%,
+                transparent 70%);
+            z-index: -4;
+            animation: pulseGlow 8s ease-in-out infinite;
+        }
+        @keyframes pulseGlow {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.3; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        .glass-effect:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        .mood-btn {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(8px);
+        }
+        .mood-btn:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        .mood-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.8s ease, height 0.8s ease;
+        }
+        .mood-btn:active::after {
+            width: 300px;
+            height: 300px;
+        }
+        .music-player {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .music-player:hover {
+            transform: scale(1.03);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        .loading {
+            position: relative;
+            overflow: hidden;
+        }
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: loading 1.5s infinite;
+        }
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .fade-in {
+            animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .mood-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 8px;
+            transition: transform 0.4s ease;
+        }
+        .mood-btn:hover .mood-icon {
+            transform: scale(1.2);
+        }
+        .feature-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+        }
+        .mood-tip {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .mood-tip:hover {
+            transform: scale(1.03);
+        }
+        .welcome-section {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0.3; }
+            100% { transform: scale(1); opacity: 0.5; }
+        }
+        .testimonial-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .testimonial-card:hover {
+            transform: translateY(-8px);
+        }
+        .trending-item {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .trending-item:hover {
+            transform: scale(1.05);
+        }
+        .calendar-day {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .calendar-day:hover {
+            transform: scale(1.15);
+        }
+        /* Responsive Design Improvements */
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            .welcome-section {
+                padding: 2rem 1rem;
+            }
+            .grid {
+                gap: 1rem;
+            }
+            .mood-btn {
+                padding: 0.75rem;
+            }
+            .mood-icon {
+                width: 36px;
+                height: 36px;
+            }
+            .glass-effect {
+                padding: 1rem;
+            }
+        }
+        @media (max-width: 640px) {
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            .welcome-section h1 {
+                font-size: 2rem;
+            }
+            .welcome-section p {
+                font-size: 1rem;
+            }
+            .mood-btn {
+                padding: 0.5rem;
+            }
+        }
+        /* Animated fade-in for music cards */
+        .music-fade-in {
+            opacity: 0;
+            transform: translateY(30px) scale(0.98);
+            animation: musicFadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        @keyframes musicFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        /* Animated glowing border for YouTube button */
+        .glow-btn {
+            box-shadow: 0 0 0 0 rgba(236,72,153,0.7);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glow-btn:hover {
+            box-shadow: 0 0 20px 4px rgba(236,72,153,0.7), 0 0 40px 8px rgba(168,85,247,0.5);
+            transform: translateY(-2px);
+        }
+        /* Floating animation for elements */
+        .float {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        /* Gradient text effect */
+        .gradient-text {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gradient 8s ease infinite;
+        }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        /* Logo Styles */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-container:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            position: relative;
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        .logo-icon svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 8px rgba(236, 72, 153, 0.5));
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #EC4899, #8B5CF6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gradientText 8s ease infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @keyframes gradientText {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @media (max-width: 640px) {
+            .logo-icon {
+                width: 32px;
+                height: 32px;
+            }
+            .logo-text {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white">
+    <div class="glow-effect" style="pointer-events: none;"></div>
+    <div class="animated-gradient" style="pointer-events: none;"></div>
+    <div class="floating-shapes" style="pointer-events: none;">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    <div id="particles-js" style="pointer-events: none;"></div>
+    <div id="mood-background" class="mood-background" style="pointer-events: none;"></div>
+    
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-gradient-to-r from-purple-900/80 to-blue-900/80 backdrop-blur-lg shadow-lg">
+        <div class="container mx-auto flex justify-between items-center py-4 px-6">
+            <a href="/" class="logo-container">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" fill="url(#gradient)"/>
+                        <defs>
+                            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#EC4899"/>
+                                <stop offset="100%" style="stop-color:#8B5CF6"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <span class="logo-text">MoodTunes</span>
+            </a>
+            <div class="flex items-center space-x-4">
+                <div id="auth-buttons" class="flex space-x-2">
+                    <button onclick="showAuthModal('signin')" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg transition-colors">
+                        Sign In
+                    </button>
+                    <button onclick="showAuthModal('signup')" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition-colors">
+                        Sign Up
+                    </button>
+                </div>
+                <div id="profile-section" class="relative hidden">
+                    <button onclick="toggleProfileDropdown()" class="flex items-center space-x-2 focus:outline-none focus:ring-2 focus:ring-pink-400">
+                        <img id="profile-pic" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Profile" class="h-8 w-8 rounded-full border-2 border-pink-400 shadow">
+                        <span id="username" class="font-semibold">User</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div id="profile-dropdown-menu" class="absolute right-0 mt-2 w-56 bg-white text-gray-900 rounded-lg shadow-lg border border-gray-200 py-2 transition-all duration-200 scale-95 opacity-0 pointer-events-none">
+                        <a href="/profile" class="block px-4 py-2 hover:bg-pink-50 rounded">Profile</a>
+                        <a href="/settings" class="block px-4 py-2 hover:bg-pink-50 rounded">Settings</a>
+                        <button onclick="signOut()" class="block w-full text-left px-4 py-2 hover:bg-pink-50 rounded text-red-600">Sign Out</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Welcome Section -->
+        <div class="welcome-section rounded-2xl p-8 mb-12 animate__animated animate__fadeIn">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-purple-500 animate__animated animate__fadeInDown">
+                    Welcome to Your Mood Companion
+                </h1>
+                <p class="text-xl text-gray-300 mb-8 animate__animated animate__fadeInUp">
+                    Discover music and quotes that resonate with your emotions. Let us help you navigate through your feelings with personalized recommendations.
+                </p>
+                <div class="flex justify-center space-x-4">
+                    <a href="#mood-selector" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors animate__animated animate__fadeInUp">
+                        Get Started
+                    </a>
+                    <a href="/calendar" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors animate__animated animate__fadeInUp">
+                        View Your Journey
+                    </a>
+                    <a href="/quiz" class="bg-yellow-400 hover:bg-yellow-500 text-black px-6 py-3 rounded-lg font-semibold transition-colors animate__animated animate__fadeInUp">
+                        🎲 Take the Mood Quiz
+                    </a>
+                    <a href="/motivational-wall" class="bg-green-400 hover:bg-green-500 text-black px-4 py-2 rounded-lg font-semibold transition-colors animate__animated animate__fadeInUp"">
+                        🌟 Motivational Wall
+                    </a>
+                    
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="glass-effect rounded-xl p-6 feature-card cursor-pointer" onclick="showFeatureModal('music')">
+                <img src="https://cdn-icons-png.flaticon.com/512/1785/1785210.png" alt="Music" class="w-16 h-16 mx-auto mb-4">
+                <h3 class="text-xl font-semibold text-center mb-2">Music Recommendations</h3>
+                <p class="text-gray-300 text-center">Get personalized music suggestions based on your mood</p>
+            </div>
+            <div class="glass-effect rounded-xl p-6 feature-card cursor-pointer" onclick="showFeatureModal('quotes')">
+                <img src="https://cdn-icons-png.flaticon.com/512/2490/2490313.png" alt="Quotes" class="w-16 h-16 mx-auto mb-4">
+                <h3 class="text-xl font-semibold text-center mb-2">Inspiring Quotes</h3>
+                <p class="text-gray-300 text-center">Discover motivational quotes that resonate with your feelings</p>
+            </div>
+            <div class="glass-effect rounded-xl p-6 feature-card cursor-pointer" onclick="showFeatureModal('mood')">
+                <img src="https://cdn-icons-png.flaticon.com/512/1995/1995570.png" alt="Mood Tracking" class="w-16 h-16 mx-auto mb-4">
+                <h3 class="text-xl font-semibold text-center mb-2">Mood Tracking</h3>
+                <p class="text-gray-300 text-center">Track your mood patterns and discover insights</p>
+            </div>
+        </div>
+
+        <!-- Feature Modals -->
+        <div id="feature-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+            <div class="glass-effect rounded-xl p-8 max-w-2xl w-full mx-4 animate__animated animate__fadeIn">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-semibold" id="modal-title"></h3>
+                    <button onclick="closeFeatureModal()" class="text-gray-400 hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div id="modal-content" class="space-y-4">
+                    <!-- Content will be dynamically populated -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Mood Tips Section -->
+        <div class="glass-effect rounded-xl p-8 mb-12">
+            <h2 class="text-2xl font-semibold mb-6 text-center">Daily Mood Tips</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="mood-tip p-4 rounded-lg bg-gradient-to-br from-pink-500/20 to-purple-500/20">
+                    <h3 class="font-semibold mb-2">Practice Gratitude</h3>
+                    <p class="text-gray-300">Take a moment each day to appreciate the good things in your life.</p>
+                </div>
+                <div class="mood-tip p-4 rounded-lg bg-gradient-to-br from-blue-500/20 to-indigo-500/20">
+                    <h3 class="font-semibold mb-2">Stay Active</h3>
+                    <p class="text-gray-300">Regular exercise can help boost your mood and energy levels.</p>
+                </div>
+                <div class="mood-tip p-4 rounded-lg bg-gradient-to-br from-green-500/20 to-teal-500/20">
+                    <h3 class="font-semibold mb-2">Mindful Breathing</h3>
+                    <p class="text-gray-300">Take deep breaths to help manage stress and anxiety.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mood Selector Section -->
+        <div id="mood-selector" class="glass-effect rounded-xl p-8 mb-8 animate__animated animate__fadeIn">
+            <h2 class="text-2xl font-semibold mb-6">How are you feeling today?</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <button class="mood-btn p-4 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 transition-all flex flex-col items-center" data-mood="happy">
+                    <span class="mood-icon" style="font-size:2.5rem;">😊</span>
+                    <span>Happy</span>
+                </button>
+                <button class="mood-btn p-4 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 transition-all flex flex-col items-center" data-mood="sad">
+                    <span class="mood-icon" style="font-size:2.5rem;">😔</span>
+                    <span>Sad</span>
+                </button>
+                <button class="mood-btn p-4 rounded-lg bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 transition-all flex flex-col items-center" data-mood="energetic">
+                    <span class="mood-icon" style="font-size:2.5rem;">😆</span>
+                    <span>Energetic</span>
+                </button>
+                <button class="mood-btn p-4 rounded-lg bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 transition-all flex flex-col items-center" data-mood="calm">
+                    <span class="mood-icon" style="font-size:2.5rem;">😌</span>
+                    <span>Calm</span>
+                </button>
+                <button class="mood-btn p-4 rounded-lg bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 transition-all flex flex-col items-center" data-mood="romantic">
+                    <span class="mood-icon" style="font-size:2.5rem;">❤️</span>
+                    <span>Romantic</span>
+                </button>
+                <button class="mood-btn p-4 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 transition-all flex flex-col items-center" data-mood="motivated">
+                    <span class="mood-icon" style="font-size:2.5rem;">💪</span>
+                    <span>Motivated</span>
+                </button>
+                <button class="mood-btn p-4 rounded-lg bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 transition-all flex flex-col items-center" data-mood="nostalgic">
+                    <span class="mood-icon" style="font-size:2.5rem;">🕰️</span>
+                    <span>Nostalgic</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Recommendations Section -->
+        <div class="grid md:grid-cols-2 gap-8 mb-12">
+            <div class="glass-effect rounded-xl p-6">
+                <h3 class="text-xl font-semibold mb-4">Recommended Music</h3>
+                <div id="music-recommendations" class="space-y-6">
+                    <div class="text-center text-gray-400">Select a mood to get music recommendations</div>
+                </div>
+            </div>
+
+            <div class="glass-effect rounded-xl p-6">
+                <h3 class="text-xl font-semibold mb-4">Inspiring Quotes</h3>
+                <div id="quote-recommendations" class="space-y-4">
+                    <div class="text-center text-gray-400">Select a mood to get inspiring quotes</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trending Section -->
+        <div class="glass-effect rounded-xl p-8 mb-12">
+            <h2 class="text-2xl font-semibold mb-6 text-center">Trending Now</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="trending-item p-4 rounded-lg bg-gradient-to-br from-pink-500/20 to-purple-500/20">
+                    <div class="flex items-center mb-3">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1785/1785210.png" alt="Music" class="w-8 h-8 mr-3">
+                        <h3 class="font-semibold">Most Played Song</h3>
+                    </div>
+                    <p class="text-gray-300">"Weightless" by Marconi Union</p>
+                    <p class="text-sm text-gray-400">Perfect for relaxation and stress relief</p>
+                </div>
+                <div class="trending-item p-4 rounded-lg bg-gradient-to-br from-blue-500/20 to-indigo-500/20">
+                    <div class="flex items-center mb-3">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2490/2490313.png" alt="Quote" class="w-8 h-8 mr-3">
+                        <h3 class="font-semibold">Popular Quote</h3>
+                    </div>
+                    <p class="text-gray-300">"The present moment is filled with joy and happiness. If you are attentive, you will see it."</p>
+                    <p class="text-sm text-gray-400">- Thich Nhat Hanh</p>
+                </div>
+                <div class="trending-item p-4 rounded-lg bg-gradient-to-br from-green-500/20 to-teal-500/20">
+                    <div class="flex items-center mb-3">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1995/1995570.png" alt="Mood" class="w-8 h-8 mr-3">
+                        <h3 class="font-semibold">Popular Mood</h3>
+                    </div>
+                    <p class="text-gray-300">Calm</p>
+                    <p class="text-sm text-gray-400">Most selected mood this week</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Testimonials -->
+        <div class="glass-effect rounded-xl p-8 mb-12">
+            <h2 class="text-2xl font-semibold mb-6 text-center">What Users Say</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="testimonial-card p-6 rounded-lg bg-gradient-to-br from-pink-500/10 to-purple-500/10">
+                    <div class="flex items-center mb-4">
+                        <img src="https://randomuser.me/api/portraits/women/1.jpg" alt="User" class="w-12 h-12 rounded-full mr-4">
+                        <div>
+                            <h3 class="font-semibold">Sarah Johnson</h3>
+                            <p class="text-sm text-gray-400">Regular User</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300">"This app has been a game-changer for my daily mood management. The music recommendations are spot on!"</p>
+                </div>
+                <div class="testimonial-card p-6 rounded-lg bg-gradient-to-br from-blue-500/10 to-indigo-500/10">
+                    <div class="flex items-center mb-4">
+                        <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="User" class="w-12 h-12 rounded-full mr-4">
+                        <div>
+                            <h3 class="font-semibold">Michael Chen</h3>
+                            <p class="text-sm text-gray-400">Premium User</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300">"The mood tracking feature helps me understand my emotional patterns better. Love the insights!"</p>
+                </div>
+                <div class="testimonial-card p-6 rounded-lg bg-gradient-to-br from-green-500/10 to-teal-500/10">
+                    <div class="flex items-center mb-4">
+                        <img src="https://randomuser.me/api/portraits/women/2.jpg" alt="User" class="w-12 h-12 rounded-full mr-4">
+                        <div>
+                            <h3 class="font-semibold">Emma Davis</h3>
+                            <p class="text-sm text-gray-400">New User</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300">"The quotes are so inspiring! I've started collecting my favorites. Great app for daily motivation."</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mood Calendar Preview -->
+        <div class="glass-effect rounded-xl p-8 mb-12">
+            <h2 class="text-2xl font-semibold mb-6 text-center">Your Mood Calendar</h2>
+            <div class="grid grid-cols-7 gap-2 max-w-2xl mx-auto" id="mood-calendar">
+                <!-- Calendar will be populated by JavaScript -->
+            </div>
+            <div class="text-center mt-6">
+                <a href="/calendar" class="text-pink-500 hover:text-pink-400 transition-colors">View Full Calendar →</a>
+            </div>
+        </div>
+
+        <div id="current-mood-display">
+            <span id="mood-emoji" style="font-size:2rem;"></span>
+            <span id="mood-label"></span>
+        </div>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="glass-effect rounded-xl p-8 max-w-md w-full mx-4 animate__animated animate__fadeIn">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-semibold" id="auth-modal-title">Sign In</h3>
+                <button onclick="closeAuthModal()" class="text-gray-400 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <form id="auth-form" class="space-y-4">
+                <!-- Sign In Fields -->
+                <div id="signin-fields">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                        <input type="email" id="signin-email" class="w-full bg-white/10 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Enter your email">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">Password</label>
+                        <input type="password" id="signin-password" class="w-full bg-white/10 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Enter your password">
+                    </div>
+                </div>
+
+                <!-- Sign Up Fields -->
+                <div id="signup-fields" class="hidden">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">Full Name</label>
+                        <input type="text" id="signup-name" class="w-full bg-white/10 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Enter your full name">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">Username</label>
+                        <input type="text" id="signup-username" class="w-full bg-white/10 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Choose a username">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                        <input type="email" id="signup-email" class="w-full bg-white/10 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Enter your email">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">Password</label>
+                        <input type="password" id="signup-password" class="w-full bg-white/10 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Create a password" maxlength="10">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">Profile Picture (Optional)</label>
+                        <input type="file" id="signup-profile-pic" accept="image/*" class="w-full bg-white/10 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    Sign In
+                </button>
+            </form>
+            <div class="mt-4 text-center">
+                <p class="text-gray-400">
+                    <span id="auth-switch-text">Don't have an account?</span>
+                    <button onclick="toggleAuthMode()" class="text-pink-500 hover:text-pink-400 ml-1">
+                        Sign Up
+                    </button>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mood background images
+        const moodBackgrounds = {
+            happy: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80',
+            sad: 'https://images.unsplash.com/photo-1501139083538-0139583c060f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80',
+            energetic: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80',
+            calm: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80',
+            romantic: 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80',
+            motivated: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80',
+            nostalgic: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'
+        };
+
+        // Initialize particles.js with enhanced configuration
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 60, density: { enable: true, value_area: 800 } },
+                color: { 
+                    value: ['#4F46E5', '#9333EA', '#EC4899', '#ffffff']
+                },
+                shape: { 
+                    type: ['circle', 'triangle', 'polygon'],
+                    stroke: { width: 0, color: '#000000' },
+                    polygon: { nb_sides: 5 }
+                },
+                opacity: { 
+                    value: 0.6,
+                    random: true,
+                    anim: { enable: true, speed: 1, opacity_min: 0.1, sync: false }
+                },
+                size: { 
+                    value: 4,
+                    random: true,
+                    anim: { enable: true, speed: 2, size_min: 0.1, sync: false }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: '#ffffff',
+                    opacity: 0.2,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: 'none',
+                    random: true,
+                    straight: false,
+                    out_mode: 'out',
+                    bounce: false,
+                    attract: { enable: true, rotateX: 600, rotateY: 1200 }
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: { enable: true, mode: 'repulse' },
+                    onclick: { enable: true, mode: 'push' },
+                    resize: true
+                },
+                modes: {
+                    repulse: { distance: 150, duration: 0.4 },
+                    push: { particles_nb: 4 }
+                }
+            },
+            retina_detect: true
+        });
+
+        let currentYouTubeId = '';
+        let isSignIn = true;
+
+        // Handle mood selection with loading states
+        document.querySelectorAll('.mood-btn').forEach(button => {
+            button.addEventListener('click', async () => {
+                const mood = button.dataset.mood;
+                const musicContainer = document.getElementById('music-recommendations');
+                const quoteContainer = document.getElementById('quote-recommendations');
+                const moodBackground = document.getElementById('mood-background');
+                
+                // Update background image
+                moodBackground.style.backgroundImage = `url(${moodBackgrounds[mood]})`;
+                moodBackground.style.opacity = '0.3';
+                
+                // Show loading state
+                musicContainer.innerHTML = '<div class="loading p-4 rounded-lg">Loading music recommendations...</div>';
+                quoteContainer.innerHTML = '<div class="loading p-4 rounded-lg">Loading quotes...</div>';
+                
+                try {
+                    const response = await fetch(`/api/recommendations?mood=${mood}`);
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    const data = await response.json();
+                    
+                    if (data.error) {
+                        throw new Error(data.details || data.error);
+                    }
+                    
+                    // Update music recommendations with animation
+                    const musicByLanguage = {
+                        hindi: data.music.filter(song => song.title.includes('Kesariya') || song.title.includes('Chaleya') || song.title.includes('Tere') || song.title.includes('O Bedardeya') || song.title.includes('Naatu') || song.title.includes('Jhoome')),
+                        english: data.music.filter(song => !song.title.includes('Kesariya') && !song.title.includes('Chaleya') && !song.title.includes('Tere') && !song.title.includes('O Bedardeya') && !song.title.includes('Naatu') && !song.title.includes('Jhoome') && !song.title.includes('Gaj') && !song.title.includes('Jindiye')),
+                        punjabi: data.music.filter(song => song.title.includes('Gaj') || song.title.includes('Jindiye') || song.title.includes('Munde') || song.title.includes('295'))
+                    };
+
+                    if (Object.values(musicByLanguage).every(songs => songs.length === 0)) {
+                        throw new Error('No songs found for this mood');
+                    }
+
+                    musicContainer.innerHTML = `
+                        <div class="space-y-8">
+                            ${musicByLanguage.hindi.length > 0 ? `
+                                <div class="fade-in transform hover:scale-[1.02] transition-all duration-300" style="animation-delay: 0.1s">
+                                    <h4 class="text-xl font-bold mb-4 text-pink-400 flex items-center">
+                                        <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                                        </svg>
+                                        Hindi Songs
+                                    </h4>
+                                    ${musicByLanguage.hindi.map((song, index) => {
+                                        let videoId = '';
+                                        if (song.youtube_embed) {
+                                            const match = song.youtube_embed.match(/embed\/([^?]+)/);
+                                            videoId = match ? match[1] : '';
+                                        } else if (song.youtube_url) {
+                                            const match = song.youtube_url.match(/[?&]v=([^&]+)/);
+                                            videoId = match ? match[1] : '';
+                                        }
+                                        const youtubeUrl = videoId ? `https://www.youtube.com/watch?v=${videoId}` : '';
+                                        return `
+                                            <div class="glass-effect p-6 rounded-xl music-player mb-4 transform hover:scale-105 hover:-translate-y-1 transition-all duration-300 hover:shadow-lg hover:shadow-pink-500/20 music-fade-in" style="animation-delay: ${(index+1)*0.12}s">
+                                                <div class="flex justify-between items-start">
+                                                    <div class="flex-1">
+                                                        <div class="flex items-center mb-2">
+                                                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center mr-3">
+                                                                <span class="text-white font-bold">${index + 1}</span>
+                                                            </div>
+                                                            <div>
+                                                                <h4 class="font-bold text-lg">${song.title}</h4>
+                                                                <p class="text-gray-300">${song.artist}</p>
+                                                            </div>
+                                                        </div>
+                                                        ${youtubeUrl ? `
+                                                            <div class="mt-3">
+                                                                <a href="${youtubeUrl}" target="_blank" 
+                                                                   class="inline-flex items-center px-4 py-2 rounded-lg bg-gradient-to-r from-pink-500 to-purple-500 text-white glow-btn hover:from-pink-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-105">
+                                                                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                                                        <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+                                                                    </svg>
+                                                                    Watch on YouTube
+                                                                </a>
+                                                                <p class="text-xs text-gray-400 mt-2 flex items-center">
+                                                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                                                                    </svg>
+                                                                    If video is unavailable, try searching for "${song.title} ${song.artist}" on YouTube
+                                                                </p>
+                                                            </div>
+                                                        ` : `
+                                                            <p class="text-sm text-gray-400 mt-2 flex items-center">
+                                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                                                                </svg>
+                                                                Video link not available
+                                                            </p>
+                                                        `}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            ` : ''}
+                            ${musicByLanguage.english.length > 0 ? `
+                                <div class="fade-in transform hover:scale-[1.02] transition-all duration-300" style="animation-delay: 0.2s">
+                                    <h4 class="text-xl font-bold mb-4 text-blue-400 flex items-center">
+                                        <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                                        </svg>
+                                        English Songs
+                                    </h4>
+                                    ${musicByLanguage.english.map((song, index) => {
+                                        let videoId = '';
+                                        if (song.youtube_embed) {
+                                            const match = song.youtube_embed.match(/embed\/([^?]+)/);
+                                            videoId = match ? match[1] : '';
+                                        } else if (song.youtube_url) {
+                                            const match = song.youtube_url.match(/[?&]v=([^&]+)/);
+                                            videoId = match ? match[1] : '';
+                                        }
+                                        const youtubeUrl = videoId ? `https://www.youtube.com/watch?v=${videoId}` : '';
+                                        return `
+                                            <div class="glass-effect p-6 rounded-xl music-player mb-4 transform hover:scale-105 hover:-translate-y-1 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 music-fade-in" style="animation-delay: ${(index+1)*0.12}s">
+                                                <div class="flex justify-between items-start">
+                                                    <div class="flex-1">
+                                                        <div class="flex items-center mb-2">
+                                                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center mr-3">
+                                                                <span class="text-white font-bold">${index + 1}</span>
+                                                            </div>
+                                                            <div>
+                                                                <h4 class="font-bold text-lg">${song.title}</h4>
+                                                                <p class="text-gray-300">${song.artist}</p>
+                                                            </div>
+                                                        </div>
+                                                        ${youtubeUrl ? `
+                                                            <div class="mt-3">
+                                                                <a href="${youtubeUrl}" target="_blank" 
+                                                                   class="inline-flex items-center px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 text-white glow-btn hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 transform hover:scale-105">
+                                                                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                                                        <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+                                                                    </svg>
+                                                                    Watch on YouTube
+                                                                </a>
+                                                                <p class="text-xs text-gray-400 mt-2 flex items-center">
+                                                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                                                                    </svg>
+                                                                    If video is unavailable, try searching for "${song.title} ${song.artist}" on YouTube
+                                                                </p>
+                                                            </div>
+                                                        ` : `
+                                                            <p class="text-sm text-gray-400 mt-2 flex items-center">
+                                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                                                                </svg>
+                                                                Video link not available
+                                                            </p>
+                                                        `}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            ` : ''}
+                            ${musicByLanguage.punjabi.length > 0 ? `
+                                <div class="fade-in transform hover:scale-[1.02] transition-all duration-300" style="animation-delay: 0.3s">
+                                    <h4 class="text-xl font-bold mb-4 text-yellow-400 flex items-center">
+                                        <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                                        </svg>
+                                        Punjabi Songs
+                                    </h4>
+                                    ${musicByLanguage.punjabi.map((song, index) => {
+                                        let videoId = '';
+                                        if (song.youtube_embed) {
+                                            const match = song.youtube_embed.match(/embed\/([^?]+)/);
+                                            videoId = match ? match[1] : '';
+                                        } else if (song.youtube_url) {
+                                            const match = song.youtube_url.match(/[?&]v=([^&]+)/);
+                                            videoId = match ? match[1] : '';
+                                        }
+                                        const youtubeUrl = videoId ? `https://www.youtube.com/watch?v=${videoId}` : '';
+                                        return `
+                                            <div class="glass-effect p-6 rounded-xl music-player mb-4 transform hover:scale-105 hover:-translate-y-1 transition-all duration-300 hover:shadow-lg hover:shadow-yellow-500/20 music-fade-in" style="animation-delay: ${(index+1)*0.12}s">
+                                                <div class="flex justify-between items-start">
+                                                    <div class="flex-1">
+                                                        <div class="flex items-center mb-2">
+                                                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center mr-3">
+                                                                <span class="text-white font-bold">${index + 1}</span>
+                                                            </div>
+                                                            <div>
+                                                                <h4 class="font-bold text-lg">${song.title}</h4>
+                                                                <p class="text-gray-300">${song.artist}</p>
+                                                            </div>
+                                                        </div>
+                                                        ${youtubeUrl ? `
+                                                            <div class="mt-3">
+                                                                <a href="${youtubeUrl}" target="_blank" 
+                                                                   class="inline-flex items-center px-4 py-2 rounded-lg bg-gradient-to-r from-yellow-500 to-orange-500 text-white glow-btn hover:from-yellow-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105">
+                                                                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                                                        <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+                                                                    </svg>
+                                                                    Watch on YouTube
+                                                                </a>
+                                                                <p class="text-xs text-gray-400 mt-2 flex items-center">
+                                                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                                                                    </svg>
+                                                                    If video is unavailable, try searching for "${song.title} ${song.artist}" on YouTube
+                                                                </p>
+                                                            </div>
+                                                        ` : `
+                                                            <p class="text-sm text-gray-400 mt-2 flex items-center">
+                                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                                                                </svg>
+                                                                Video link not available
+                                                            </p>
+                                                        `}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+
+                    // Update quote recommendations with animation
+                    if (data.quotes && data.quotes.length > 0) {
+                        quoteContainer.innerHTML = data.quotes.map((quote, index) => `
+                            <div class="glass-effect p-4 rounded-lg fade-in" style="animation-delay: ${index * 0.1}s">
+                                <p class="italic">"${quote.text}"</p>
+                                <p class="text-right text-gray-300">- ${quote.author}</p>
+                            </div>
+                        `).join('');
+                    } else {
+                        quoteContainer.innerHTML = '<div class="text-center text-gray-400">No quotes available for this mood</div>';
+                    }
+                } catch (error) {
+                    console.error('Error fetching recommendations:', error);
+                    musicContainer.innerHTML = `
+                        <div class="text-red-500 p-4 text-center">
+                            <p class="mb-2">Error loading recommendations</p>
+                            <p class="text-sm text-gray-400">${error.message}</p>
+                        </div>
+                    `;
+                    quoteContainer.innerHTML = `
+                        <div class="text-red-500 p-4 text-center">
+                            <p class="mb-2">Error loading quotes</p>
+                            <p class="text-sm text-gray-400">${error.message}</p>
+                        </div>
+                    `;
+                }
+                showMood(mood);
+            });
+        });
+
+        function updateCalendar() {
+            const calendar = document.getElementById('mood-calendar');
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const today = new Date();
+            const currentDay = today.getDay();
+            
+            // Get the start of the week (Sunday)
+            const startOfWeek = new Date(today);
+            startOfWeek.setDate(today.getDate() - currentDay);
+            
+            let calendarHTML = '';
+            
+            // Generate calendar days
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(startOfWeek);
+                date.setDate(startOfWeek.getDate() + i);
+                
+                const isToday = date.toDateString() === today.toDateString();
+                const dayNumber = date.getDate();
+                
+                calendarHTML += `
+                    <div class="calendar-day p-2 rounded-lg ${isToday ? 'bg-pink-500/30' : 'bg-gradient-to-br from-pink-500/20 to-purple-500/20'} text-center">
+                        <p class="text-sm text-gray-400">${days[i]}</p>
+                        <div class="w-8 h-8 mx-auto rounded-full ${isToday ? 'bg-pink-500/50' : 'bg-pink-500/30'} flex items-center justify-center">
+                            <span class="text-sm">${dayNumber}</span>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            calendar.innerHTML = calendarHTML;
+        }
+
+        // Call updateCalendar when the page loads
+        document.addEventListener('DOMContentLoaded', updateCalendar);
+
+        function showFeatureModal(feature) {
+            const modal = document.getElementById('feature-modal');
+            const title = document.getElementById('modal-title');
+            const content = document.getElementById('modal-content');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            switch(feature) {
+                case 'music':
+                    title.textContent = 'Music Recommendations';
+                    content.innerHTML = `
+                        <div class="space-y-6">
+                            <div class="glass-effect p-4 rounded-lg">
+                                <h4 class="text-lg font-semibold mb-2">Personalized Music Selection</h4>
+                                <p class="text-gray-300">Get music recommendations tailored to your current mood:</p>
+                                <ul class="list-disc list-inside mt-2 text-gray-300">
+                                    <li>Multiple languages: Hindi, English, and Punjabi</li>
+                                    <li>Curated playlists for each mood</li>
+                                    <li>Direct YouTube integration for instant playback</li>
+                                    <li>Save your favorite tracks</li>
+                                </ul>
+                            </div>
+                            <div class="glass-effect p-4 rounded-lg">
+                                <h4 class="text-lg font-semibold mb-2">How It Works</h4>
+                                <p class="text-gray-300">Simply select your mood, and we'll provide you with carefully curated music recommendations that match your emotional state.</p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'quotes':
+                    title.textContent = 'Inspiring Quotes';
+                    content.innerHTML = `
+                        <div class="space-y-6">
+                            <div class="glass-effect p-4 rounded-lg">
+                                <h4 class="text-lg font-semibold mb-2">Daily Inspiration</h4>
+                                <p class="text-gray-300">Discover quotes that resonate with your feelings:</p>
+                                <ul class="list-disc list-inside mt-2 text-gray-300">
+                                    <li>Curated quotes for every mood</li>
+                                    <li>From famous personalities and thought leaders</li>
+                                    <li>Save your favorite quotes</li>
+                                    <li>Share quotes with friends</li>
+                                </ul>
+                            </div>
+                            <div class="glass-effect p-4 rounded-lg">
+                                <h4 class="text-lg font-semibold mb-2">Quote Categories</h4>
+                                <p class="text-gray-300">We provide quotes for various emotional states including happiness, motivation, calmness, and more.</p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'mood':
+                    title.textContent = 'Mood Tracking';
+                    content.innerHTML = `
+                        <div class="space-y-6">
+                            <div class="glass-effect p-4 rounded-lg">
+                                <h4 class="text-lg font-semibold mb-2">Track Your Emotional Journey</h4>
+                                <p class="text-gray-300">Monitor and understand your emotional patterns:</p>
+                                <ul class="list-disc list-inside mt-2 text-gray-300">
+                                    <li>Daily mood logging</li>
+                                    <li>Weekly and monthly mood analysis</li>
+                                    <li>Mood streak tracking</li>
+                                    <li>Personalized insights</li>
+                                </ul>
+                            </div>
+                            <div class="glass-effect p-4 rounded-lg">
+                                <h4 class="text-lg font-semibold mb-2">Mood Calendar</h4>
+                                <p class="text-gray-300">View your mood history in a beautiful calendar format, helping you identify patterns and trends in your emotional well-being.</p>
+                            </div>
+                            <div class="glass-effect p-4 rounded-lg">
+                                <h4 class="text-lg font-semibold mb-2">Mood Statistics</h4>
+                                <p class="text-gray-300">Get insights into your most common moods, current streak, and total entries to better understand your emotional journey.</p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+        }
+
+        function closeFeatureModal() {
+            const modal = document.getElementById('feature-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function showAuthModal(mode) {
+            const modal = document.getElementById('auth-modal');
+            const title = document.getElementById('auth-modal-title');
+            const signinFields = document.getElementById('signin-fields');
+            const signupFields = document.getElementById('signup-fields');
+            const submitButton = document.querySelector('#auth-form button[type="submit"]');
+            const switchText = document.getElementById('auth-switch-text');
+            const switchButton = document.querySelector('#auth-form + div button');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            if (mode === 'signin') {
+                title.textContent = 'Sign In';
+                signinFields.classList.remove('hidden');
+                signupFields.classList.add('hidden');
+                submitButton.textContent = 'Sign In';
+                switchText.textContent = "Don't have an account?";
+                switchButton.textContent = 'Sign Up';
+                isSignIn = true;
+            } else {
+                title.textContent = 'Sign Up';
+                signinFields.classList.add('hidden');
+                signupFields.classList.remove('hidden');
+                submitButton.textContent = 'Sign Up';
+                switchText.textContent = 'Already have an account?';
+                switchButton.textContent = 'Sign In';
+                isSignIn = false;
+            }
+        }
+
+        function closeAuthModal() {
+            const modal = document.getElementById('auth-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function toggleAuthMode() {
+            showAuthModal(isSignIn ? 'signup' : 'signin');
+        }
+
+        // Handle form submission
+        document.getElementById('auth-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (isSignIn) {
+                // Sign In
+                const email = document.getElementById('signin-email').value;
+                const password = document.getElementById('signin-password').value;
+                
+                try {
+                    const response = await fetch('/api/signin', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email, password })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        // Update UI for signed in state
+                        document.getElementById('auth-buttons').classList.add('hidden');
+                        document.getElementById('profile-section').classList.remove('hidden');
+                        document.getElementById('username').textContent = data.username;
+                        if (data.profile_pic) {
+                            document.getElementById('profile-pic').src = data.profile_pic;
+                        }
+                        closeAuthModal();
+                    } else {
+                        // Show error message
+                        const errorMessage = data.error;
+                        if (errorMessage.includes('No account found')) {
+                            // If no account exists, suggest signing up
+                            if (confirm('No account found with this email. Would you like to sign up instead?')) {
+                                showAuthModal('signup');
+                            }
+                        } else {
+                            alert(errorMessage);
+                        }
+                    }
+                } catch (error) {
+                    alert('An error occurred during sign in');
+                }
+            } else {
+                // Sign Up
+                const formData = new FormData();
+                formData.append('name', document.getElementById('signup-name').value);
+                formData.append('username', document.getElementById('signup-username').value);
+                formData.append('email', document.getElementById('signup-email').value);
+                formData.append('password', document.getElementById('signup-password').value);
+                
+                const profilePic = document.getElementById('signup-profile-pic').files[0];
+                if (profilePic) {
+                    formData.append('profile_pic', profilePic);
+                }
+                
+                try {
+                    const response = await fetch('/api/signup', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        alert(data.message || 'Sign up successful! Please sign in.');
+                        showAuthModal('signin');
+                    } else {
+                        alert(data.error || 'Sign up failed');
+                    }
+                } catch (error) {
+                    alert('An error occurred during sign up');
+                }
+            }
+        });
+
+        async function signOut() {
+            try {
+                const response = await fetch('/api/signout', {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Update UI for signed out state
+                    document.getElementById('auth-buttons').classList.remove('hidden');
+                    document.getElementById('profile-section').classList.add('hidden');
+                }
+            } catch (error) {
+                alert('An error occurred during sign out');
+            }
+        }
+
+        function toggleProfileDropdown() {
+            const menu = document.getElementById('profile-dropdown-menu');
+            if (menu.classList.contains('opacity-0')) {
+                menu.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+                menu.classList.add('opacity-100', 'pointer-events-auto', 'scale-100');
+            } else {
+                menu.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+                menu.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
+            }
+        }
+
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('profile-section');
+            const menu = document.getElementById('profile-dropdown-menu');
+            if (dropdown && menu && !dropdown.contains(event.target)) {
+                menu.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+                menu.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
+            }
+        });
+
+        // Check authentication status on every page load
+        async function checkAuthStatus() {
+            try {
+                const response = await fetch('/api/profile');
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('auth-buttons').classList.add('hidden');
+                    document.getElementById('profile-section').classList.remove('hidden');
+                    document.getElementById('username').textContent = data.name || data.username;
+                    if (data.profile_pic) {
+                        document.getElementById('profile-pic').src = data.profile_pic;
+                    }
+                } else {
+                    document.getElementById('auth-buttons').classList.remove('hidden');
+                    document.getElementById('profile-section').classList.add('hidden');
+                }
+            } catch (e) {
+                document.getElementById('auth-buttons').classList.remove('hidden');
+                document.getElementById('profile-section').classList.add('hidden');
+            }
+        }
+        document.addEventListener('DOMContentLoaded', checkAuthStatus);
+
+        async function toggleFavorite(type, item) {
+            const favId = `fav-${type}-${item}`;
+            const icon = document.getElementById(favId);
+            const isFav = icon.classList.contains('text-pink-500');
+            const method = isFav ? 'DELETE' : 'POST';
+            await fetch('/api/favorite', {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type, item })
+            });
+            icon.classList.toggle('text-pink-500');
+            icon.classList.toggle('text-gray-400');
+        }
+
+        async function loadMoodAnalytics() {
+            const res = await fetch('/api/mood-history?start_date=2024-01-01&end_date=2024-12-31');
+            const data = await res.json();
+            const moods = data.entries.map(e => e.mood);
+            const dates = data.entries.map(e => e.time);
+
+            new Chart(document.getElementById('moodChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: 'Mood Over Time',
+                        data: moods.map(m => moodToNumber(m)), // You need to map moods to numbers
+                        borderColor: '#EC4899',
+                        fill: false
+                    }]
+                }
+            });
+        }
+        function moodToNumber(mood) {
+            // Map moods to numbers for charting
+            const mapping = { Happy: 5, Energetic: 4, Calm: 3, Sad: 2, Nostalgic: 1 };
+            return mapping[mood] || 0;
+        }
+        document.addEventListener('DOMContentLoaded', loadMoodAnalytics);
+
+        function getMoodEmoji(mood) {
+            const emojis = {
+                happy: '😊',
+                sad: '😔',
+                energetic: '⚡',
+                calm: '😌',
+                romantic: '❤️',
+                motivated: '💪',
+                nostalgic: '🕰️'
+            };
+            return emojis[mood] || '😊';
+        }
+
+        function showMood(mood) {
+            document.getElementById('mood-emoji').textContent = getMoodEmoji(mood);
+            document.getElementById('mood-label').textContent = mood.charAt(0).toUpperCase() + mood.slice(1);
+        }
+
+        // Password validation for sign up
+        function validatePassword(password) {
+            // At least 1 uppercase, 1 lowercase, 1 number, 1 special char, 8-10 chars
+            const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,10}$/;
+            return regex.test(password);
+        }
+
+        // Show error message below password field
+        function showPasswordError(msg) {
+            let error = document.getElementById('signup-password-error');
+            if (!error) {
+                error = document.createElement('div');
+                error.id = 'signup-password-error';
+                error.className = 'text-red-400 text-sm mt-1';
+                document.getElementById('signup-password').parentNode.appendChild(error);
+            }
+            error.textContent = msg;
+        }
+        function clearPasswordError() {
+            const error = document.getElementById('signup-password-error');
+            if (error) error.textContent = '';
+        }
+
+        // Validate on input
+        const signupPassword = document.getElementById('signup-password');
+        signupPassword.addEventListener('input', function() {
+            if (!validatePassword(this.value)) {
+                showPasswordError('Password must be 8-10 chars, include uppercase, lowercase, number, and special character.');
+            } else {
+                clearPasswordError();
+            }
+        });
+
+        // Validate on form submit
+        const signupForm = document.getElementById('auth-form');
+        signupForm.addEventListener('submit', function(e) {
+            if (!isSignIn) {
+                const pwd = signupPassword.value;
+                if (!validatePassword(pwd)) {
+                    showPasswordError('Password must be 8-10 chars, include uppercase, lowercase, number, and special character.');
+                    signupPassword.focus();
+                    e.preventDefault();
+                    return false;
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

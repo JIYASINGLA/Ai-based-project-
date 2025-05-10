@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Calendar - Mood Music & Quote Recommender</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .glass-effect:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .calendar-day {
+            transition: all 0.3s ease;
+        }
+        .calendar-day:hover {
+            transform: scale(1.05);
+        }
+        .mood-entry {
+            transition: all 0.3s ease;
+        }
+        .mood-entry:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-900 via-blue-900 to-purple-900 min-h-screen text-white">
+    <div id="particles-js"></div>
+    
+    <!-- Header -->
+    <header class="container mx-auto px-4 py-6">
+        <div class="flex justify-between items-center">
+            <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-purple-500">
+                Mood Calendar
+            </h1>
+            <a href="/" class="text-pink-500 hover:text-pink-400 transition-colors">← Back to Home</a>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Mood Statistics -->
+        <div class="glass-effect rounded-xl p-6 mb-8">
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="text-center">
+                    <h3 class="text-xl font-semibold mb-2">Current Streak</h3>
+                    <p id="streak-count" class="text-4xl font-bold text-pink-500">0</p>
+                    <p class="text-sm text-gray-400">days</p>
+                </div>
+                <div class="text-center">
+                    <h3 class="text-xl font-semibold mb-2">Most Common Mood</h3>
+                    <p id="common-mood" class="text-4xl font-bold text-purple-500">-</p>
+                    <p class="text-sm text-gray-400">this month</p>
+                </div>
+                <div class="text-center">
+                    <h3 class="text-xl font-semibold mb-2">Total Entries</h3>
+                    <p id="total-entries" class="text-4xl font-bold text-blue-500">0</p>
+                    <p class="text-sm text-gray-400">this month</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Month Navigation -->
+        <div class="glass-effect rounded-xl p-6 mb-8 flex justify-between items-center">
+            <button id="prevMonth" class="text-pink-500 hover:text-pink-400 transition-colors">← Previous Month</button>
+            <h2 id="currentMonth" class="text-2xl font-semibold">May 2024</h2>
+            <button id="nextMonth" class="text-pink-500 hover:text-pink-400 transition-colors">Next Month →</button>
+        </div>
+
+        <!-- Calendar Grid -->
+        <div class="glass-effect rounded-xl p-8 mb-8">
+            <!-- Mood Legend -->
+            <div class="flex flex-wrap gap-4 mb-6">
+                <div class="flex items-center">
+                    <div class="w-4 h-4 rounded-full bg-pink-500/30 mr-2"></div>
+                    <span class="text-sm text-gray-300">Happy</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-4 h-4 rounded-full bg-blue-500/30 mr-2"></div>
+                    <span class="text-sm text-gray-300">Sad</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-4 h-4 rounded-full bg-yellow-500/30 mr-2"></div>
+                    <span class="text-sm text-gray-300">Energetic</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-4 h-4 rounded-full bg-green-500/30 mr-2"></div>
+                    <span class="text-sm text-gray-300">Calm</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-4 h-4 rounded-full bg-red-500/30 mr-2"></div>
+                    <span class="text-sm text-gray-300">Romantic</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-4 h-4 rounded-full bg-purple-500/30 mr-2"></div>
+                    <span class="text-sm text-gray-300">Motivated</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-4 h-4 rounded-full bg-indigo-500/30 mr-2"></div>
+                    <span class="text-sm text-gray-300">Nostalgic</span>
+                </div>
+            </div>
+            <div class="grid grid-cols-7 gap-2 mb-4">
+                <div class="text-center font-semibold text-gray-400">Sun</div>
+                <div class="text-center font-semibold text-gray-400">Mon</div>
+                <div class="text-center font-semibold text-gray-400">Tue</div>
+                <div class="text-center font-semibold text-gray-400">Wed</div>
+                <div class="text-center font-semibold text-gray-400">Thu</div>
+                <div class="text-center font-semibold text-gray-400">Fri</div>
+                <div class="text-center font-semibold text-gray-400">Sat</div>
+            </div>
+            <div id="calendar-grid" class="grid grid-cols-7 gap-2">
+                <!-- Calendar will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Daily Mood Details -->
+        <div id="daily-details" class="glass-effect rounded-xl p-8 mb-8 hidden">
+            <h3 id="selected-date" class="text-2xl font-semibold mb-6">May 15, 2024</h3>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h4 class="text-xl font-semibold mb-4">Mood History</h4>
+                    <div id="mood-history" class="space-y-4">
+                        <!-- Mood entries will be populated by JavaScript -->
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-xl font-semibold mb-4">Music & Quotes</h4>
+                    <div id="daily-content" class="space-y-4">
+                        <!-- Music and quotes will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Summary -->
+        <div id="monthly-summary" class="glass-effect rounded-xl p-8 hidden">
+            <h3 class="text-2xl font-semibold mb-6">Monthly Mood Summary</h3>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h4 class="text-xl font-semibold mb-4">Mood Distribution</h4>
+                    <div id="mood-chart" class="h-64 mb-6">
+                        <!-- Chart will be populated by JavaScript -->
+                    </div>
+                    <div id="mood-summary-content" class="glass-effect p-4 rounded-lg mt-2 text-gray-200 text-base animate__animated animate__fadeInUp">
+                        <!-- Mood summary will be populated by JavaScript -->
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-xl font-semibold mb-4">Top Music & Quotes</h4>
+                    <div id="monthly-content" class="space-y-4">
+                        <!-- Monthly content will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Initialize particles.js
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 100, density: { enable: true, value_area: 800 } },
+                color: { value: '#ffffff' },
+                shape: { type: 'circle' },
+                opacity: { value: 0.5, random: true },
+                size: { value: 3, random: true },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: '#ffffff',
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 3,
+                    direction: 'none',
+                    random: true,
+                    straight: false,
+                    out_mode: 'out',
+                    bounce: false
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: { enable: true, mode: 'repulse' },
+                    onclick: { enable: true, mode: 'push' },
+                    resize: true
+                },
+                modes: {
+                    repulse: { distance: 100, duration: 0.4 },
+                    push: { particles_nb: 4 }
+                }
+            },
+            retina_detect: true
+        });
+
+        let currentDate = new Date();
+        let selectedDate = null;
+        let selectedDateForMood = null;
+
+        function updateCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            // Update month display
+            document.getElementById('currentMonth').textContent = 
+                currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+            
+            // Get first day of month and total days
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const totalDays = lastDay.getDate();
+            const startingDay = firstDay.getDay();
+            
+            let calendarHTML = '';
+            
+            // Add empty cells for days before the first of the month
+            for (let i = 0; i < startingDay; i++) {
+                calendarHTML += '<div class="calendar-day p-2 rounded-lg"></div>';
+            }
+            
+            // Add days of the month
+            for (let day = 1; day <= totalDays; day++) {
+                const date = new Date(year, month, day);
+                const isToday = date.toDateString() === new Date().toDateString();
+                const isSelected = selectedDate && date.toDateString() === selectedDate.toDateString();
+                
+                calendarHTML += `
+                    <div class="calendar-day p-2 rounded-lg ${isToday ? 'bg-pink-500/30' : 'bg-gradient-to-br from-pink-500/20 to-purple-500/20'} text-center cursor-pointer ${isSelected ? 'ring-2 ring-pink-500' : ''}"
+                         onclick="showDailyDetails('${date.toISOString()}')">
+                        <p class="text-sm text-gray-400">${day}</p>
+                        <div class="w-8 h-8 mx-auto rounded-full ${isToday ? 'bg-pink-500/50' : 'bg-pink-500/30'} flex items-center justify-center">
+                            <span class="text-sm">${day}</span>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('calendar-grid').innerHTML = calendarHTML;
+        }
+
+        function showDailyDetails(dateString) {
+            const date = new Date(dateString);
+            selectedDate = date;
+            selectedDateForMood = date;
+            
+            // Update selected date display
+            document.getElementById('selected-date').textContent = 
+                date.toLocaleString('default', { month: 'long', day: 'numeric', year: 'numeric' });
+            
+            // Show the details section
+            document.getElementById('daily-details').classList.remove('hidden');
+            
+            // Update calendar to show selected date
+            updateCalendar();
+            
+            // Load mood history for the selected date
+            loadMoodHistory(date);
+        }
+
+        async function loadMoodHistory(date) {
+            try {
+                const response = await fetch(`/api/mood-history?date=${date.toISOString()}`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.details || data.error);
+                }
+                
+                // Update mood statistics
+                updateMoodStats(data.entries);
+                
+                let historyHTML = '';
+                if (data.entries && data.entries.length > 0) {
+                    data.entries.forEach(entry => {
+                        const moodColor = getMoodColor(entry.mood);
+                        historyHTML += `
+                            <div class="mood-entry glass-effect p-4 rounded-lg">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-semibold">${entry.time}</span>
+                                    <span class="text-${moodColor}-400">${entry.mood}</span>
+                                </div>
+                                <div class="text-sm text-gray-300">
+                                    <p class="mb-1">Music: ${entry.music.join(', ')}</p>
+                                    <p class="italic">"${entry.quotes[0]}"</p>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    historyHTML = `
+                        <div class="text-center text-gray-400 py-4">
+                            No mood entries for this day
+                        </div>
+                    `;
+                }
+                
+                document.getElementById('mood-history').innerHTML = historyHTML;
+                
+                // Update daily content summary
+                updateDailyContent(data.entries);
+                
+                // Show monthly summary
+                document.getElementById('monthly-summary').classList.remove('hidden');
+                updateMonthlySummary();
+            } catch (error) {
+                console.error('Error loading mood history:', error);
+                showError(error);
+            }
+        }
+
+        function getMoodColor(mood) {
+            const moodColors = {
+                'happy': 'pink',
+                'sad': 'blue',
+                'energetic': 'yellow',
+                'calm': 'green',
+                'romantic': 'red',
+                'motivated': 'purple',
+                'nostalgic': 'indigo'
+            };
+            return moodColors[mood.toLowerCase()] || 'pink';
+        }
+
+        function updateMoodStats(entries) {
+            if (!entries || entries.length === 0) {
+                document.getElementById('streak-count').textContent = '0';
+                document.getElementById('common-mood').textContent = '-';
+                document.getElementById('total-entries').textContent = '0';
+                return;
+            }
+
+            // Calculate streak
+            let streak = 1;
+            const today = new Date().toDateString();
+            const yesterday = new Date(Date.now() - 86400000).toDateString();
+            
+            if (entries.some(entry => new Date(entry.timestamp).toDateString() === today)) {
+                streak = 1;
+                let checkDate = new Date(Date.now() - 86400000);
+                while (entries.some(entry => new Date(entry.timestamp).toDateString() === checkDate.toDateString())) {
+                    streak++;
+                    checkDate = new Date(checkDate.getTime() - 86400000);
+                }
+            }
+            
+            // Calculate most common mood
+            const moodCounts = entries.reduce((acc, entry) => {
+                acc[entry.mood] = (acc[entry.mood] || 0) + 1;
+                return acc;
+            }, {});
+            
+            const commonMood = Object.entries(moodCounts)
+                .sort((a, b) => b[1] - a[1])[0][0];
+            
+            // Update stats
+            document.getElementById('streak-count').textContent = streak;
+            document.getElementById('common-mood').textContent = commonMood;
+            document.getElementById('total-entries').textContent = entries.length;
+        }
+
+        function updateDailyContent(entries) {
+            const dailyContent = document.getElementById('daily-content');
+            if (entries && entries.length > 0) {
+                const allMusic = [...new Set(entries.flatMap(entry => entry.music))];
+                const allQuotes = [...new Set(entries.flatMap(entry => entry.quotes))];
+                
+                dailyContent.innerHTML = `
+                    <div class="glass-effect p-4 rounded-lg mb-4">
+                        <h5 class="font-semibold mb-2">Music Played Today</h5>
+                        <ul class="list-disc list-inside text-gray-300">
+                            ${allMusic.map(song => `<li>${song}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div class="glass-effect p-4 rounded-lg">
+                        <h5 class="font-semibold mb-2">Quotes Shown Today</h5>
+                        <ul class="list-disc list-inside text-gray-300">
+                            ${allQuotes.map(quote => `<li class="italic">"${quote}"</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            } else {
+                dailyContent.innerHTML = `
+                    <div class="text-center text-gray-400 py-4">
+                        No content for this day
+                    </div>
+                `;
+            }
+        }
+
+        async function updateMonthlySummary() {
+            try {
+                const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+                const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+                
+                const response = await fetch(`/api/mood-history?start_date=${startOfMonth.toISOString()}&end_date=${endOfMonth.toISOString()}`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.details || data.error);
+                }
+                
+                // Create mood distribution chart
+                const moodCounts = data.entries.reduce((acc, entry) => {
+                    acc[entry.mood] = (acc[entry.mood] || 0) + 1;
+                    return acc;
+                }, {});
+                
+                const canvas = document.getElementById('mood-chart');
+                if (canvas && canvas.getContext) {
+                    const ctx = canvas.getContext('2d');
+                    new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: Object.keys(moodCounts),
+                            datasets: [{
+                                data: Object.values(moodCounts),
+                                backgroundColor: Object.keys(moodCounts).map(mood => 
+                                    `rgba(${getMoodRGB(mood)}, 0.6)`
+                                ),
+                                borderColor: Object.keys(moodCounts).map(mood => 
+                                    `rgba(${getMoodRGB(mood)}, 1)`
+                                ),
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'right',
+                                    labels: {
+                                        color: '#fff'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    console.error('Canvas element not found or not a canvas!');
+                }
+                
+                // Mood summary content
+                const summaryDiv = document.getElementById('mood-summary-content');
+                if (Object.keys(moodCounts).length === 0) {
+                    summaryDiv.innerHTML = `<span class='text-gray-400'>No mood data for this month yet. Start logging your moods to see your trends!</span>`;
+                } else {
+                    // Find most common mood and supportive message
+                    const sortedMoods = Object.entries(moodCounts).sort((a, b) => b[1] - a[1]);
+                    const [topMood, topCount] = sortedMoods[0];
+                    const total = Object.values(moodCounts).reduce((a, b) => a + b, 0);
+                    const percent = Math.round((topCount / total) * 100);
+                    let moodMsg = '';
+                    switch(topMood.toLowerCase()) {
+                        case 'happy':
+                            moodMsg = "You've had a joyful month! Keep spreading positivity."; break;
+                        case 'sad':
+                            moodMsg = "It's okay to have tough days. Remember, brighter moments are ahead!"; break;
+                        case 'energetic':
+                            moodMsg = "Your energy is inspiring! Channel it into things you love."; break;
+                        case 'calm':
+                            moodMsg = "You've found calmness this month. Keep nurturing your peace."; break;
+                        case 'romantic':
+                            moodMsg = "Love is in the air! Cherish your special connections."; break;
+                        case 'motivated':
+                            moodMsg = "Your motivation is strong! Keep striving for your goals."; break;
+                        case 'nostalgic':
+                            moodMsg = "You've been reflecting a lot. Treasure your memories, but look forward too."; break;
+                        default:
+                            moodMsg = "Every mood is valid. Keep taking care of yourself!";
+                    }
+                    summaryDiv.innerHTML = `
+                        <div class='flex items-center mb-2'>
+                            <span class='text-lg font-bold mr-2'>${topMood.charAt(0).toUpperCase() + topMood.slice(1)}</span>
+                            <span class='text-pink-400 font-semibold'>${percent}%</span>
+                        </div>
+                        <div class='mb-1'>Your most frequent mood this month.</div>
+                        <div class='italic text-pink-300'>${moodMsg}</div>
+                    `;
+                }
+                
+                // Update monthly content
+                const monthlyContent = document.getElementById('monthly-content');
+                const allMusic = [...new Set(data.entries.flatMap(entry => entry.music))];
+                const allQuotes = [...new Set(data.entries.flatMap(entry => entry.quotes))];
+                
+                monthlyContent.innerHTML = `
+                    <div class="glass-effect p-4 rounded-lg mb-4">
+                        <h5 class="font-semibold mb-2">Top Music This Month</h5>
+                        <ul class="list-disc list-inside text-gray-300">
+                            ${allMusic.slice(0, 5).map(song => `<li>${song}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div class="glass-effect p-4 rounded-lg">
+                        <h5 class="font-semibold mb-2">Top Quotes This Month</h5>
+                        <ul class="list-disc list-inside text-gray-300">
+                            ${allQuotes.slice(0, 5).map(quote => `<li class="italic">"${quote}"</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error updating monthly summary:', error);
+                showError(error);
+            }
+        }
+
+        function getMoodRGB(mood) {
+            const moodColors = {
+                'happy': '255, 105, 180',
+                'sad': '59, 130, 246',
+                'energetic': '234, 179, 8',
+                'calm': '34, 197, 94',
+                'romantic': '239, 68, 68',
+                'motivated': '168, 85, 247',
+                'nostalgic': '99, 102, 241'
+            };
+            return moodColors[mood.toLowerCase()] || '255, 105, 180';
+        }
+
+        function showError(error) {
+            const errorHTML = `
+                <div class="text-red-500 p-4 text-center">
+                    <p class="mb-2">Error loading data</p>
+                    <p class="text-sm text-gray-400">${error.message}</p>
+                </div>
+            `;
+            document.getElementById('mood-history').innerHTML = errorHTML;
+            document.getElementById('daily-content').innerHTML = errorHTML;
+            document.getElementById('monthly-summary').classList.add('hidden');
+        }
+
+        // Event listeners for month navigation
+        document.getElementById('prevMonth').addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            updateCalendar();
+        });
+
+        document.getElementById('nextMonth').addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            updateCalendar();
+        });
+
+        // Add a function to handle mood selection for the selected date
+        async function selectMoodForDate(mood) {
+            if (!selectedDateForMood) {
+                alert('Please select a date on the calendar first.');
+                return;
+            }
+            // Format date as ISO string (midnight UTC for the selected day)
+            const dateISO = new Date(selectedDateForMood.getFullYear(), selectedDateForMood.getMonth(), selectedDateForMood.getDate()).toISOString();
+            try {
+                const response = await fetch(`/api/recommendations?mood=${encodeURIComponent(mood)}&date=${encodeURIComponent(dateISO)}`);
+                const data = await response.json();
+                if (data.error) {
+                    alert('Error saving mood: ' + (data.details || data.error));
+                    return;
+                }
+                // Refresh the daily details and calendar
+                loadMoodHistory(selectedDateForMood);
+                updateCalendar();
+            } catch (error) {
+                alert('Error saving mood.');
+            }
+        }
+
+        // Add mood selection UI to daily details section
+        document.addEventListener('DOMContentLoaded', function() {
+            const moodOptions = [
+                { mood: 'happy', emoji: '😊' },
+                { mood: 'sad', emoji: '😔' },
+                { mood: 'energetic', emoji: '⚡' },
+                { mood: 'calm', emoji: '😌' },
+                { mood: 'romantic', emoji: '❤️' },
+                { mood: 'motivated', emoji: '💪' },
+                { mood: 'nostalgic', emoji: '🕰️' }
+            ];
+            const moodBar = document.createElement('div');
+            moodBar.className = 'flex flex-wrap gap-2 mb-6 justify-center';
+            moodBar.innerHTML = moodOptions.map(opt =>
+                `<button class="mood-btn p-2 rounded-lg bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white text-lg font-bold transition-all" onclick="selectMoodForDate('${opt.mood}')">${opt.emoji} ${opt.mood.charAt(0).toUpperCase() + opt.mood.slice(1)}</button>`
+            ).join('');
+            const dailyDetails = document.getElementById('daily-details');
+            if (dailyDetails) {
+                dailyDetails.insertBefore(moodBar, dailyDetails.children[1]);
+            }
+        });
+
+        // Initialize calendar
+        document.addEventListener('DOMContentLoaded', updateCalendar);
+    </script>
+</body>
+</html> 

@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mood Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        #particles-js {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            transition: all 0.3s ease;
+        }
+        .glass-effect:hover {
+            background: rgba(255, 255, 255, 0.22);
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 12px 32px 0 rgba(236, 72, 153, 0.15);
+        }
+        .question-card {
+            transition: all 0.3s cubic-bezier(.4,0,.2,1);
+        }
+        .question-card:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 8px 24px 0 rgba(236, 72, 153, 0.12);
+        }
+        .option-btn {
+            transition: all 0.3s cubic-bezier(.4,0,.2,1);
+        }
+        .option-btn:hover, .option-btn:focus {
+            transform: scale(1.04);
+            background: linear-gradient(90deg, #f9a8d4 0%, #a5b4fc 100%);
+            color: #fff;
+            box-shadow: 0 4px 16px 0 rgba(236, 72, 153, 0.10);
+        }
+        .progress-bar {
+            transition: width 0.5s cubic-bezier(.4,0,.2,1);
+            background: linear-gradient(90deg, #ec4899 0%, #a5b4fc 100%);
+            box-shadow: 0 2px 8px 0 rgba(236, 72, 153, 0.10);
+        }
+        .result-card {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .confetti {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 100;
+        }
+        .animated-gradient-border {
+            position: relative;
+            z-index: 1;
+        }
+        .animated-gradient-border:before {
+            content: '';
+            position: absolute;
+            top: -3px; left: -3px; right: -3px; bottom: -3px;
+            z-index: -1;
+            border-radius: 1.25rem;
+            background: linear-gradient(270deg, #ec4899, #a5b4fc, #fbbf24, #34d399, #ec4899);
+            background-size: 800% 800%;
+            animation: borderGradient 6s ease infinite;
+        }
+        @keyframes borderGradient {
+            0% {background-position:0% 50%}
+            50% {background-position:100% 50%}
+            100% {background-position:0% 50%}
+        }
+        .emoji-animate {
+            display: inline-block;
+            animation: bounceEmoji 1.2s infinite;
+        }
+        @keyframes bounceEmoji {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px) scale(1.2); }
+        }
+        .progress-bar-emoji {
+            position: absolute;
+            top: -18px;
+            left: 0;
+            transition: left 0.5s cubic-bezier(.4,0,.2,1);
+            font-size: 1.5rem;
+            z-index: 2;
+        }
+        .floating-shapes {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .floating-shape {
+            position: absolute;
+            opacity: 0.15;
+            animation: floatShape 8s linear infinite;
+        }
+        @keyframes floatShape {
+            0% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.1); }
+            100% { transform: translateY(0) scale(1); }
+        }
+        .ripple-btn {
+            position: relative;
+            overflow: hidden;
+        }
+        .ripple-btn:active::after {
+            content: '';
+            position: absolute;
+            left: 50%; top: 50%;
+            width: 200px; height: 200px;
+            background: rgba(236,72,153,0.15);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: ripple 0.5s linear;
+            z-index: 1;
+        }
+        @keyframes ripple {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        .badge {
+            display: inline-block;
+            background: linear-gradient(90deg, #fbbf24, #ec4899);
+            color: #fff;
+            font-weight: bold;
+            padding: 0.5rem 1.5rem;
+            border-radius: 9999px;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 8px 0 rgba(236, 72, 153, 0.15);
+            animation: badgePop 1s cubic-bezier(.4,0,.2,1);
+        }
+        @keyframes badgePop {
+            0% { transform: scale(0.5); opacity: 0; }
+            60% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .floating-tip {
+            position: fixed;
+            left: 50%;
+            bottom: 32px;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, #a5b4fc, #f9a8d4);
+            color: #fff;
+            padding: 0.75rem 2rem;
+            border-radius: 1.5rem;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 12px 0 rgba(168, 85, 247, 0.15);
+            z-index: 50;
+            animation: fadeInUp 1s cubic-bezier(.4,0,.2,1);
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translate(-50%, 40px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-100 via-pink-100 to-yellow-100 min-h-screen text-gray-900 relative">
+    <div id="particles-js"></div>
+    <!-- Header -->
+    <header class="bg-white/80 shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="/" class="text-xl font-bold text-pink-600">← Back to Home</a>
+            <h1 class="text-3xl font-bold">🎯 Mood Quiz</h1>
+            <div class="w-24"></div> <!-- Spacer for alignment -->
+        </div>
+    </header>
+
+    <div class="max-w-2xl md:max-w-3xl lg:max-w-4xl mx-auto py-10 px-2 md:px-4 flex flex-col min-h-[80vh] justify-center">
+        <!-- Floating Shapes -->
+        <div class="floating-shapes">
+            <div class="floating-shape" style="left:10%;top:10%;width:60px;height:60px;background:#ec4899;border-radius:50%;animation-delay:0s;"></div>
+            <div class="floating-shape" style="left:80%;top:20%;width:40px;height:40px;background:#a5b4fc;border-radius:50%;animation-delay:1s;"></div>
+            <div class="floating-shape" style="left:30%;top:70%;width:50px;height:50px;background:#fbbf24;border-radius:50%;animation-delay:2s;"></div>
+            <div class="floating-shape" style="left:60%;top:80%;width:30px;height:30px;background:#34d399;border-radius:50%;animation-delay:3s;"></div>
+        </div>
+        <!-- Progress Bar -->
+        <div class="mb-10">
+            <div class="flex justify-between items-center mb-3">
+                <span class="text-base md:text-lg font-semibold">Progress</span>
+                <span id="progress-text" class="text-base md:text-lg font-semibold">0%</span>
+            </div>
+            <div class="h-3 md:h-4 bg-gray-200 rounded-full relative overflow-visible">
+                <div id="progress-bar" class="progress-bar h-3 md:h-4 rounded-full" style="width: 0%"></div>
+                <span id="progress-bar-emoji" class="progress-bar-emoji" style="left:0">⭐</span>
+            </div>
+        </div>
+
+        <!-- Start Quiz Button -->
+        <div id="start-quiz-section" class="flex flex-col items-center mb-12 animate__animated animate__fadeIn">
+            <div class="mb-6 text-center">
+                <div class="text-6xl md:text-7xl mb-4 animate__animated animate__bounceIn">🎉</div>
+                <h2 class="text-3xl md:text-4xl font-extrabold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-purple-500">Welcome to the Mood Quiz!</h2>
+                <p class="text-gray-600 text-lg md:text-xl">Discover your mood and get personalized music & quotes. Click below to begin!</p>
+            </div>
+            <button onclick="startQuiz()" class="bg-pink-500 hover:bg-pink-600 text-white px-10 py-5 rounded-xl text-2xl font-bold transition-colors shadow-lg glass-effect w-full max-w-sm">Start Quiz</button>
+        </div>
+
+        <!-- Quiz Container -->
+        <div id="quiz-container" class="space-y-12 hidden w-full flex-1 flex flex-col justify-center">
+            <!-- Questions will be dynamically inserted here -->
+        </div>
+
+        <!-- Result Card (Hidden initially) -->
+        <div id="result-card" class="hidden w-full flex-1 flex flex-col justify-center">
+            <div class="glass-effect animated-gradient-border bg-white/80 rounded-2xl p-8 md:p-12 shadow-lg result-card relative mx-auto w-full max-w-2xl">
+                <canvas id="confetti-canvas" class="confetti hidden"></canvas>
+                <div class="flex justify-center mb-6">
+                    <span class="badge animate__animated animate__bounceIn text-lg md:text-xl py-3 px-8">🎉 Quiz Completed!</span>
+                </div>
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl md:text-4xl font-extrabold mb-6">Your Mood Result</h2>
+                    <div id="result-emoji" class="text-7xl md:text-8xl mb-6">😊</div>
+                    <p id="result-mood" class="text-3xl md:text-4xl font-bold text-pink-600 mb-3">Happy</p>
+                    <p id="result-description" class="text-gray-600 text-lg md:text-2xl">You're feeling positive and energetic!</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 mb-10">
+                    <div class="bg-pink-50 rounded-xl p-6 md:p-8">
+                        <h3 class="text-2xl font-bold mb-4">Recommended Music</h3>
+                        <div id="music-recommendations" class="space-y-4 text-lg md:text-xl">
+                            <!-- Music recommendations will be inserted here -->
+                        </div>
+                    </div>
+                    <div class="bg-purple-50 rounded-xl p-6 md:p-8">
+                        <h3 class="text-2xl font-bold mb-4">Inspiring Quotes</h3>
+                        <div id="quote-recommendations" class="space-y-4 text-lg md:text-xl">
+                            <!-- Quotes will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col md:flex-row justify-center items-center space-y-3 md:space-y-0 md:space-x-6">
+                    <button onclick="restartQuiz()" class="bg-pink-500 hover:bg-pink-600 text-white px-8 py-4 rounded-xl font-bold text-xl transition-colors w-full md:w-auto">Take Quiz Again</button>
+                    <button onclick="shareResult()" class="bg-purple-500 hover:bg-purple-600 text-white px-8 py-4 rounded-xl font-bold text-xl transition-colors w-full md:w-auto">Share Result</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "How are you feeling right now?",
+                options: [
+                    { text: "😊 Happy and Energetic", value: "happy" },
+                    { text: "😔 Sad and Low", value: "sad" },
+                    { text: "⚡ Full of Energy", value: "energetic" },
+                    { text: "😌 Calm and Peaceful", value: "calm" },
+                    { text: "❤️ Romantic and Loving", value: "romantic" },
+                    { text: "💪 Motivated and Focused", value: "motivated" },
+                    { text: "🕰️ Nostalgic and Reflective", value: "nostalgic" }
+                ]
+            },
+            {
+                question: "What's your energy level today?",
+                options: [
+                    { text: "🌟 Super High", value: "high" },
+                    { text: "✨ Moderate", value: "moderate" },
+                    { text: "💫 Low", value: "low" }
+                ]
+            },
+            {
+                question: "What's the weather like?",
+                options: [
+                    { text: "☀️ Sunny and Bright", value: "sunny" },
+                    { text: "🌧️ Rainy and Cozy", value: "rainy" },
+                    { text: "⛅ Partly Cloudy", value: "cloudy" },
+                    { text: "❄️ Cold and Crisp", value: "cold" }
+                ]
+            },
+            {
+                question: "What would you like to do right now?",
+                options: [
+                    { text: "🎵 Listen to Music", value: "music" },
+                    { text: "📚 Read a Book", value: "read" },
+                    { text: "🏃‍♂️ Exercise", value: "exercise" },
+                    { text: "🎮 Play Games", value: "games" },
+                    { text: "🎨 Be Creative", value: "creative" }
+                ]
+            },
+            {
+                question: "How's your stress level?",
+                options: [
+                    { text: "😌 Very Relaxed", value: "relaxed" },
+                    { text: "😐 Moderate", value: "moderate" },
+                    { text: "😰 Very Stressed", value: "stressed" }
+                ]
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = [];
+
+        function startQuiz() {
+            currentQuestion = 0;
+            answers = [];
+            document.getElementById('start-quiz-section').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            updateProgressBar();
+            showQuestion();
+        }
+
+        function updateProgressBar(completed = false) {
+            let progress;
+            if (completed) {
+                progress = 100;
+            } else {
+                progress = (currentQuestion === 0) ? 0 : ((currentQuestion) / questions.length) * 100;
+            }
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('progress-text').textContent = `${Math.round(progress)}%`;
+            // Move the emoji along the bar
+            const bar = document.querySelector('.progress-bar');
+            const emoji = document.getElementById('progress-bar-emoji');
+            if (bar && emoji) {
+                const barRect = bar.parentElement.getBoundingClientRect();
+                const width = barRect.width;
+                const left = Math.min(width * (progress / 100), width - 32);
+                emoji.style.left = `${left}px`;
+            }
+        }
+
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            updateProgressBar();
+            // Pick an emoji from the first option for animation
+            const emojiChar = question.options[0].text.split(' ')[0];
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = `
+                <div class="question-card glass-effect animated-gradient-border bg-white/80 rounded-2xl p-8 md:p-12 shadow-lg animate__animated animate__fadeIn">
+                    <h2 class="text-3xl md:text-4xl font-extrabold mb-8"><span class='emoji-animate mr-3 text-4xl md:text-5xl'>${emojiChar}</span>${question.question}</h2>
+                    <div class="grid gap-6">
+                        ${question.options.map((option, index) => `
+                            <button onclick="selectOption('${option.value}')" 
+                                    class="option-btn ripple-btn bg-white hover:bg-pink-50 text-left p-5 md:p-6 rounded-xl border border-gray-200 flex items-center space-x-6 text-xl md:text-2xl font-semibold">
+                                <span class="text-3xl md:text-4xl">${option.text.split(' ')[0]}</span>
+                                <span>${option.text.split(' ').slice(1).join(' ')}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectOption(value) {
+            answers[currentQuestion] = value;
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            } else {
+                updateProgressBar(true); // Show 100% on completion
+                showResult();
+            }
+        }
+
+        async function showResult() {
+            // Calculate mood based on answers
+            const mood = calculateMood(answers);
+            
+            // Hide quiz container and show result
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('result-card').classList.remove('hidden');
+            
+            // Update result card
+            document.getElementById('result-emoji').textContent = getMoodEmoji(mood);
+            document.getElementById('result-mood').textContent = mood.charAt(0).toUpperCase() + mood.slice(1);
+            document.getElementById('result-description').textContent = getMoodDescription(mood);
+            
+            // Get recommendations
+            try {
+                const response = await fetch(`/api/recommendations?mood=${mood}`);
+                const data = await response.json();
+                
+                // Update music recommendations
+                const musicContainer = document.getElementById('music-recommendations');
+                musicContainer.innerHTML = data.music.map(song => `
+                    <div class="bg-white/50 p-4 rounded-lg">
+                        <h4 class="font-semibold">${song.title}</h4>
+                        <p class="text-gray-600">${song.artist}</p>
+                    </div>
+                `).join('');
+                
+                // Update quote recommendations
+                const quoteContainer = document.getElementById('quote-recommendations');
+                quoteContainer.innerHTML = data.quotes.map(quote => `
+                    <div class="bg-white/50 p-4 rounded-lg">
+                        <p class="italic">"${quote.text}"</p>
+                        <p class="text-right text-gray-600">- ${quote.author}</p>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error fetching recommendations:', error);
+            }
+
+            // Confetti effect
+            launchConfetti();
+        }
+
+        function calculateMood(answers) {
+            // Simple mood calculation based on first answer
+            return answers[0];
+        }
+
+        function getMoodEmoji(mood) {
+            const emojis = {
+                happy: '😊',
+                sad: '😔',
+                energetic: '⚡',
+                calm: '😌',
+                romantic: '❤️',
+                motivated: '💪',
+                nostalgic: '🕰️'
+            };
+            return emojis[mood] || '😊';
+        }
+
+        function getMoodDescription(mood) {
+            const descriptions = {
+                happy: "You're feeling positive and cheerful!",
+                sad: "It's okay to feel down sometimes. Let's lift your spirits!",
+                energetic: "You're full of energy and ready to take on the world!",
+                calm: "You're in a peaceful and relaxed state of mind.",
+                romantic: "Love is in the air! You're feeling romantic and affectionate.",
+                motivated: "You're focused and determined to achieve your goals!",
+                nostalgic: "You're feeling reflective and sentimental."
+            };
+            return descriptions[mood] || "You're in a good mood!";
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            answers = [];
+            document.getElementById('result-card').classList.add('hidden');
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('start-quiz-section').classList.remove('hidden');
+            updateProgressBar();
+        }
+
+        function shareResult() {
+            const mood = document.getElementById('result-mood').textContent;
+            const emoji = document.getElementById('result-emoji').textContent;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'My Mood Quiz Result',
+                    text: `I'm feeling ${mood} today! ${emoji} Take the quiz to discover your mood!`,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                const dummy = document.createElement('input');
+                document.body.appendChild(dummy);
+                document.body.removeChild(dummy);
+                alert('Result copied to clipboard!');
+            }
+        }
+
+        // Particles.js background
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: '#ec4899' },
+                shape: { type: 'circle' },
+                opacity: { value: 0.4, random: true },
+                size: { value: 3, random: true },
+                line_linked: {
+                    enable: true,
+                    distance: 120,
+                    color: '#a5b4fc',
+                    opacity: 0.3,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: 'none',
+                    random: true,
+                    straight: false,
+                    out_mode: 'out',
+                    bounce: false
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: { enable: true, mode: 'repulse' },
+                    onclick: { enable: true, mode: 'push' },
+                    resize: true
+                },
+                modes: {
+                    repulse: { distance: 80, duration: 0.4 },
+                    push: { particles_nb: 4 }
+                }
+            },
+            retina_detect: true
+        });
+
+        // Confetti effect
+        function launchConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            if (!canvas) return;
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            canvas.classList.remove('hidden');
+            const ctx = canvas.getContext('2d');
+            const confettiColors = ['#ec4899', '#a5b4fc', '#f9a8d4', '#fbbf24', '#34d399'];
+            let confetti = [];
+            for (let i = 0; i < 120; i++) {
+                confetti.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * -canvas.height,
+                    r: Math.random() * 6 + 4,
+                    d: Math.random() * 80 + 40,
+                    color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+                    tilt: Math.random() * 10 - 10
+                });
+            }
+            let angle = 0;
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                angle += 0.01;
+                for (let i = 0; i < confetti.length; i++) {
+                    let c = confetti[i];
+                    ctx.beginPath();
+                    ctx.arc(c.x, c.y, c.r, 0, 2 * Math.PI);
+                    ctx.fillStyle = c.color;
+                    ctx.fill();
+                    c.y += Math.cos(angle + c.d) + 1 + c.r / 2;
+                    c.x += Math.sin(angle) * 2;
+                    if (c.y > canvas.height) {
+                        c.x = Math.random() * canvas.width;
+                        c.y = Math.random() * -20;
+                    }
+                }
+                requestAnimationFrame(draw);
+            }
+            draw();
+            setTimeout(() => { canvas.classList.add('hidden'); }, 3500);
+        }
+
+        // Floating motivational tip
+        document.addEventListener('DOMContentLoaded', function() {
+            const tips = [
+                "Stay positive and enjoy the journey!",
+                "Every mood is valid. Embrace yours!",
+                "Music and quotes can lift your spirits!",
+                "Take a deep breath and smile! 😊",
+                "You are doing great! Keep going!"
+            ];
+            const tip = tips[Math.floor(Math.random() * tips.length)];
+            const tipDiv = document.createElement('div');
+            tipDiv.className = 'floating-tip';
+            tipDiv.innerHTML = `<span>💡 ${tip}</span>`;
+            document.body.appendChild(tipDiv);
+        });
+    </script>
+</body>
+</html>

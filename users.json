@@ -1,0 +1,20 @@
+{
+    "abc@gmail.com": {
+        "name": "jiya singla",
+        "username": "Jiya Singla",
+        "password": "$2b$12$Iu/UhMi5bq5uS1FnPvdN0.v5Y7bH41OLrhVrRv.AJh.bXn25r01Ny",
+        "profile_pic": null,
+        "bio": "",
+        "music_genres": [],
+        "created_at": "2025-05-09T13:43:14.483655"
+    },
+    "abcd@gmail.com": {
+        "name": "abc",
+        "username": "js",
+        "password": "$2b$12$PYoIPOeCdjrOKxkHGv/nRuxQqqLZ.fS3v/pcX9AvhOx7uxee05H3W",
+        "profile_pic": null,
+        "bio": "",
+        "music_genres": [],
+        "created_at": "2025-05-09T20:21:45.759798"
+    }
+}
