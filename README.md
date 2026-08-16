@@ -50,7 +50,6 @@ http://localhost:5000
   - HTML5
   - Tailwind CSS
   - JavaScript
-  - Particles.js for background animation
 
 - Backend:
   - Python
